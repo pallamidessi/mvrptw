@@ -67,8 +67,7 @@ def insertAppointment(app, appointment2D):
                 appointment2D[listIdx].insert(idx, copy.deepcopy(app));
                 return appointment2D;
 
-    tmp2 = len(appointment2D[tmp-1]);
-    appointment2D[tmp-1].insert(tmp2-1, copy.deepcopy(app));
+    appointment2D[tmp-1].append(copy.deepcopy(app));
     return appointment2D;
 
 def crossOver(parent1, parent2):
@@ -154,17 +153,17 @@ ap5 = Appointment(5, 5);
 ap6 = Appointment(6, 6);
 
 vehicle1 = Vehicle(1, 2);
-vehicle2 = Vehicle(2, 2);
-vehicle3 = Vehicle(3, 2);
-vehicle4 = Vehicle(4, 2);
-vehicle5 = Vehicle(5, 3);
+vehicle2 = Vehicle(2, 3);
+vehicle3 = Vehicle(3, 1);
+vehicle4 = Vehicle(4, 1);
+vehicle5 = Vehicle(5, 4);
 vehicle6 = Vehicle(6, 1);
 
 parent1 = Individual(
         [ap1, ap2, ap3, ap4, ap5, ap6],
         [vehicle1, vehicle2, vehicle3]);
 parent2 = Individual(
-        [ap6, ap5, ap4, ap3, ap2, ap1],
+        [ap6, ap3, ap5, ap2, ap4, ap1],
         [vehicle4, vehicle5, vehicle6]);
 
 result = crossOver(parent1, parent2);
