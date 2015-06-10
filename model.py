@@ -34,6 +34,7 @@ class Appointement():
         self.coordinate = coordinate
         self.starting_time = time
         self.group = group
+        self.load = 1
 
 
 def generate_route(n, k, height, width, starting):
