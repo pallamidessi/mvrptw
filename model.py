@@ -22,7 +22,10 @@ class Point(complex):
 
 class Appointment():
     def __repr__(self):
-        return "<Appointment coordinate:%s starting_time:%s:>\n" % (self.coordinate, self.starting_time)
+        return "<Appointment coordinate:%s starting_time:%s w_start:%s w_end:%s>\n" % (self.coordinate,
+                                                                                       self.starting_time,
+                                                                                       self.window_start,
+                                                                                       self.window_end)
     
     def _x(self):
         return self.coordinate._x()
@@ -30,11 +33,11 @@ class Appointment():
         return self.coordinate._y()
     def _group(self):
         return self.group
-    def __init__(self, coordinate, time, window, group):
+    def __init__(self, coordinate, time, group, window={'start':0,'end':0}):
         self.coordinate = coordinate
         self.starting_time = time
-        self.window_start = window.start
-        self.window_end = window.end
+        self.window_start = window['start']
+        self.window_end = window['end']
         self.group = group
         self.load = 1
 
