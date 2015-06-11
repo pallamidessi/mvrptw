@@ -1,7 +1,12 @@
+# -*- coding:utf-8 -*-
+
 import random
 import numpy
 import visualisation
 import model
+import genome
+import operators
+import copy
 
 from deap import base
 from deap import creator
@@ -9,66 +14,86 @@ from deap import tools
 from deap import algorithms
 
 
-def evaluate(individual, data, depot):
-    distance = model.euclidian_distance(depot, data[individual[0]])
-    for gene1, gene2 in zip(individual[0:-1], individual[1:]):
-        distance += model.euclidian_distance(data[gene1], data[gene2])
-    return distance,
-
-
 def main():
     random.seed(666)
+
+    # Problem's definition  
     depot = model.Point(500, 500)
     w = 1000
     h = 1000
     num_route = 2
     num_node_per_route = 5
-
-    toolbox = base.Toolbox()
-
-    creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-    creator.create("Individual", list, fitness=creator.FitnessMin)
-
     IND_SIZE = num_route * num_node_per_route
 
+    # Genetic parameter
+    pop_size = 300
+    elite_size = 1
+    crossover_probability = 0.7
+    mutation_probability = 0.7
+    ngen = 5
+    
+    # Assign the custom individual class to the toolbox
+    # And set the number of wanted fitnesses 
     toolbox = base.Toolbox()
-    toolbox.register("indices", random.sample, range(IND_SIZE), IND_SIZE)
-    toolbox.register("individual", tools.initIterate, creator.Individual,
-                     toolbox.indices)
+    creator.create("FitnessMin", base.Fitness, weights=(-1.0,-1.0))
+    creator.create("Individual", genome.MvrpIndividual, fitness=creator.FitnessMin)
+    
+    # Assign the initialisation operator to the toolbox's individual
+    # And describe the population initialisation  
+    toolbox.register("individual", operators.init, creator.Individual,
+                     size = IND_SIZE, nb_vehicle = num_route)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-    list_appointments = model.generate_route(num_route, 
+    
+    # Generate a the problem's data set
+    # i.e: Generate N "route" of appointement 
+    list_appointment = model.generate_route(num_route, 
                                              num_node_per_route,
                                              w,
                                              h,
                                              depot)
+    # Set the routes color  
     color = visualisation.color_group(num_route)
+    
+    # Set the different genetic oprator inside the toolbox
+    toolbox.register("clone", copy.deepcopy)
+    toolbox.register("mate", operators.cxRC)
+    toolbox.register("mutate", operators.constrainedSwap, data=list_appointment)
+    toolbox.register("select", tools.selNSGA2)
+    toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot)
+    
+    # Create the global population
+    # And an elite one  
 
-    toolbox.register("mate", tools.cxOrdered)
-    toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.1)
-    toolbox.register("select", tools.selTournament, tournsize=5)
-    toolbox.register("evaluate", evaluate, data=list_appointments, depot=depot)
-
-    pop = toolbox.population(n=300)
-
-    hof = tools.HallOfFame(1)
+    pop = toolbox.population(n=pop_size)
+    hof = tools.HallOfFame(elite_size)
+    
+    # Create a statistic module to display stats at each generation 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean)
     stats.register("std", numpy.std)
     stats.register("min", numpy.min)
     stats.register("max", numpy.max)
+    
+    
+    # The genetic alogorithm in itself 
+    algorithms.eaSimple(pop, 
+                        toolbox,
+                        crossover_probability,
+                        mutation_probability,
+                        ngen,
+                        stats=stats, 
+                        halloffame=hof)
 
-    algorithms.eaSimple(pop, toolbox, 0.7, 0.2, 50, stats=stats, 
-                    halloffame=hof)
-
-    root = Tk()
-    root.geometry("100x100+300+300")
-    app = Example(root, 
-                  list_appointments,
-                  color, 
-                  depot,
-                  visualisation.indexes_to_appointement(hof[0], list_appointments))
-
+    # Create display of the problem and of the best solution  
+    root = visualisation.Tk()
+    root.geometry("" + str(w) + "x" + str(h))
+    app = visualisation.Example(root, 
+                                list_appointment,
+                                color, 
+                                depot,
+                                visualisation.individual_as_appointment(hof[0], list_appointment))
+    
+    # Start the GUI main loop
     root.mainloop()  
 
 if __name__ == '__main__':
