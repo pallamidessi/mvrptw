@@ -112,14 +112,14 @@ def insertAppointment(app, appList, data):
     return appList
 
 
+
 def cxRC(parent1, parent2, data):
     """
     Custom RC (or BCRC) crossover as describe in the article[1]
 
     [1]:
     """    
-    random.seed(666)
-
+    
     child1 = copy.deepcopy(parent1)
     child2 = copy.deepcopy(parent2)
 
@@ -195,8 +195,13 @@ def cxRC(parent1, parent2, data):
     child1.vehicles = vehicleList
 
     # Yay! Offspring!
-    return child1, child2
+    return child1
 
+def crossover(parent1, parent2, data):
+    child1 = cxRC(parent1, parent2, data)
+    child2 = cxRC(parent2, parent1, data)
+    
+    return child1, child2
 
 def constrainedSwap(ind, data):
     """
