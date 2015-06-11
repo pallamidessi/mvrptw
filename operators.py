@@ -82,6 +82,18 @@ def evaluate(individual, data, depot):
     # Return a tuple of fitness: the cost and the load 
     return distance, load
 
+def window_bounds_checking(data1, data2):
+    """
+    Checks whether data2 is contained within data1.
+    This function is used during insertion, and is therefore
+    solely called in order to check whether inserting data1
+    before data2 is possible.
+    """
+    if (data1.window_end > data2.window_end):
+          return False
+    return True
+
+
 def insert_appointment1D(appList, app, data):
     """
     Appointment inserting function. Insert an appointment in a 1D
@@ -89,11 +101,15 @@ def insert_appointment1D(appList, app, data):
     """
     # Vehicle number
     for idx in range(0, len(appList)):
-        if (data[appList[idx]].starting_time > data[app].starting_time):
-            appList.insert(idx, app)
-            return appList
+        if (data[appList[idx]].window_start > data[app].window_start):
+            if window_bounds_checking(data[app], data[appList[numV][idx]]):
+                appList.insert(idx, app)
+                return appList
 
-    appList.append(app)
+        if idx == (len(appList)-1):
+            if window_bounds_checking(data[appList[numV][idx]], data[app]):
+                appList[numV].append(app)
+                return appList
     return appList
 
 
@@ -104,17 +120,57 @@ def insert_appointment2D(appList, app, data):
     """
     tmp = len(appList)
 
-    # Vehicle number
+    # Vehicle index
     numV = random.randrange(0, tmp)
 
-    for idx in range(0, len(appList[numV])):
-        if (data[appList[numV][idx]].starting_time > data[app].starting_time):
-            appList[numV].insert(idx, app)
-            return appList
+    # Number of vehicles we tried to insert this element into
+    tested_values = 1
 
-    appList[numV].append(app)
+    for idx in range(0, len(appList[numV])):
+        # Sorting using data_element.window_start
+        if (data[appList[numV][idx]].window_start > data[app].window_start):
+            # Checking if the bounds ae valid
+            if window_bounds_checking(data[app], data[appList[numV][idx]]):
+                appList[numV].insert(idx, app)
+                return appList
+            # Bounds are invalid, let's try something else
+            else:
+                # Trying with another vehicle!
+                idx = 0
+                new_numV = choosing_a_new_index(numV, tested_values, tmp)
+                
+                if numV == new_numV:
+                    return appList
+                tested_values += 1
+                numV = new_numV
+
+        if idx == (len(appList[numV])-1):
+            if window_bounds_checking(data[appList[numV][idx]], data[app]):
+                appList[numV].append(app)
+                return appList
+            else:
+                idx = 0
+                new_numV = choosing_a_new_index(numV, tested_values, tmp)
+
+                if numV == new_numV:
+                    return appList
+                tested_values += 1
+                numV = new_numV
+
     return appList
 
+def choosing_a_new_index(numV, tested_values, length):
+
+    # If there're still vehicles the function hasn't tried
+    # inserting our element into, the function gets a new id to
+    # give it a try.
+    # If it's not the case, the function just returns the list
+    # without inserting the element in it. 
+    new_numV = numV
+    while numV == new_numV and length > tested_values:
+        new_numV = random.randrange(0, length)
+    
+    return new_numV
 
 
 def cxRC(parent1, parent2, data):
