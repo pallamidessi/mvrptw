@@ -30,9 +30,11 @@ class Appointment():
         return self.coordinate._y()
     def _group(self):
         return self.group
-    def __init__(self, coordinate, time, group):
+    def __init__(self, coordinate, time, window, group):
         self.coordinate = coordinate
         self.starting_time = time
+        self.window_start = window.start
+        self.window_end = window.end
         self.group = group
         self.load = 1
 
