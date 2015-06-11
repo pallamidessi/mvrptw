@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import itertools
 
 class MvrpIndividual(object):
     """
@@ -42,4 +43,37 @@ class MvrpIndividual(object):
         print self
         return splitted_route
 
+    def is_time_constraint_respected(self):
+        tmp = self.split()
+        for sublist in tmp:
+            if len(sublist) != 0:
+                current = sublist[0]
+                for element in tmp:
+                    if element < current:
+                        return False
+                    current = element
+        return True
 
+    def is_load_respected(self):
+        tmp = self.split()
+        for sublist in tmp:
+            if len(sublist) < 5:
+                return False
+        return True
+
+    def decode(self, data):
+        tmp = self.split()
+        to_return = []
+        index = 0
+        for sublist in tmp:
+            to_return.append([])
+            for element in sublist:
+                to_return[index].append(data[element])
+            index += 1
+        return to_return
+
+    def encode(self, data):
+        self.vehicles = []
+        for sublist in data:
+            self.vehicles.append(len(sublist))
+        self.routes = list(itertools.chain.from_iterable(data))

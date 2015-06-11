@@ -1,6 +1,7 @@
 #-*- coding:utf8 -*-
 import copy
 import random
+import itertools
 
 class Appointment():
     def __init__(self, idAppointment, starting_time):
@@ -141,7 +142,7 @@ def crossOver(parent1, parent2):
                 )
 
         # Flattening the 2D list to create the offspring.
-    appointments = [i for subList in appointmentsByVehicle1 for i in subList]
+    appointments = list(itertools.chain.from_iterable(appointmentsByVehicle1))
 
     # Yay! Offspring!
     return MvrpIndividual(appointments, vehicleList)

@@ -20,9 +20,9 @@ class Point(complex):
         conv = measure == "rad" and identity or rad_to_deg
         return (abs(self), conv(phase(self)))
 
-class Appointement():
+class Appointment():
     def __repr__(self):
-        return "<Appointement coordinate:%s starting_time:%s:>\n" % (self.coordinate, self.starting_time)
+        return "<Appointment coordinate:%s starting_time:%s:>\n" % (self.coordinate, self.starting_time)
     
     def _x(self):
         return self.coordinate._x()
@@ -56,7 +56,7 @@ def generate_route(n, k, height, width, starting):
             newy = clamp(lastPoint._y() + n2 * factor, 0, height)
             lastPoint = Point(newx, newy)
             appointement_time += random.randrange(*rand_time)
-            list_appointments.append(Appointement(lastPoint, appointement_time, i))
+            list_appointments.append(Appointment(lastPoint, appointement_time, i))
     
     return list_appointments
 

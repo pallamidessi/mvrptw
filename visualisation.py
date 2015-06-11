@@ -76,7 +76,7 @@ class Example(Frame):
         
         idx = 0
         for tour in mtour:
-            tour.insert(0, model.Appointement(depot, 0, -1))
+            tour.insert(0, model.Appointment(depot, 0, -1))
             draw_tour(tour, canvas, translate_to_TKcolor(color[idx]))
             idx += 1
 

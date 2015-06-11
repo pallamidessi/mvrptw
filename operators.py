@@ -95,7 +95,7 @@ def evaluate(individual, data, depot):
     return distance, load
 
 
-def insertAppointment(app, appList, data):
+def insert_appointment_for_crossover(app, appList, data):
     """
     Appointment inserting function. Insert an appointment in a 2D
     appointment list.
@@ -169,10 +169,10 @@ def cxRC(parent1, parent2, data):
                     [item for item in appointmentsByVehicle1[index] \
                     if item != element]
 
-                    # Inserting back those elements in the list corresponding to the first
+    # Inserting back those elements in the list corresponding to the first
     # parent.
     for element in appointmentsByVehicle2[tmpSelect]:
-        appointmentsByVehicle1 = insertAppointment(
+        appointmentsByVehicle1 = insert_appointment_for_crossover(
                 element,
                 appointmentsByVehicle1,
                 data
@@ -183,17 +183,8 @@ def cxRC(parent1, parent2, data):
     
     # Making new vehicles containing the right number of appointments for the
     # offspring.
-    vehicleList = []
 
-    for index in range(0, tmpLen):
-        vehicleList.append(len(appointmentsByVehicle1[index]))
-
-    # Flattening the 2D list to create the offspring.
-    appointments = [i for subList in appointmentsByVehicle1 for i in subList]
-    
-    child1.routes = appointments
-    child1.vehicles = vehicleList
-
+    child1.encode(appointmentsByVehicle1)
     # Yay! Offspring!
     return child1
 
