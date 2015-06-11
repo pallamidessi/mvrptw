@@ -61,13 +61,13 @@ class Individual():
 def insertAppointment(app, appointment2D):
 
     tmp = len(appointment2D);
-    for listIdx in range(0, tmp):
-        for idx in range(0, len(appointment2D[listIdx])):
-            if (appointment2D[listIdx][idx]._timestamp() > app._timestamp()):
-                appointment2D[listIdx].insert(idx, copy.deepcopy(app));
-                return appointment2D;
+    no_vehicle = random.randrange(0, tmp);
+    for idx in range(0, len(appointment2D[no_vehicle])):
+        if (appointment2D[no_vehicle][idx]._timestamp() > app._timestamp()):
+            appointment2D[no_vehicle].insert(idx, copy.deepcopy(app));
+            return appointment2D;
 
-    appointment2D[tmp-1].append(copy.deepcopy(app));
+    appointment2D[no_vehicle].append(app);
     return appointment2D;
 
 def crossOver(parent1, parent2):
@@ -82,10 +82,10 @@ def crossOver(parent1, parent2):
     appointmentsByVehicle2 = [];
 
     tmpLen = len(parent1.vehicles);
-    
+
     offset1 = 0;
     offset2 = 0;
-    
+
     # Getting lists of lists containing all the appointments sorted by vehicle
     for i in range(0, tmpLen):
 
@@ -97,7 +97,7 @@ def crossOver(parent1, parent2):
                 );
 
         appointmentsByVehicle2.append(
-                copy.deepcopy(parent2._appointments()[offset2:newOffset2])
+                parent2._appointments()[offset2:newOffset2]
                 );
 
         offset1 = newOffset1;
@@ -105,6 +105,7 @@ def crossOver(parent1, parent2):
 
     print("Before: ")
     print(appointmentsByVehicle1);
+    print(appointmentsByVehicle2);
 
     # Picking and removing appointments associated to a vehicle in the second
     # parent from the first parent.
@@ -113,9 +114,9 @@ def crossOver(parent1, parent2):
     for element in appointmentsByVehicle2[tmpSelect]:
         for index in range(0, tmpLen):
             appointmentsByVehicle1[index] = \
-            [item for item in appointmentsByVehicle1[index] \
+                    [item for item in appointmentsByVehicle1[index] \
                     if item.idAppointment != element.idAppointment]
-    
+
     # Inserting back those elements in the list corresponding to the first
     # parent.
     for element in appointmentsByVehicle2[tmpSelect]:
@@ -123,7 +124,7 @@ def crossOver(parent1, parent2):
                 element,
                 appointmentsByVehicle1
                 );
-    
+
     print("After: ")
     print(appointmentsByVehicle1);
 
@@ -136,12 +137,12 @@ def crossOver(parent1, parent2):
                 Vehicle(
                     parent1._vehicles()[index]._idVehicle(),
                     len(appointmentsByVehicle1[index])
-                )
-            );
+                    )
+                );
 
-    # Flattening the 2D list to create the offspring.
+        # Flattening the 2D list to create the offspring.
     appointments = [i for subList in appointmentsByVehicle1 for i in subList];
-    
+
     # Yay! Offspring!
     return Individual(appointments, vehicleList);
 
@@ -168,6 +169,12 @@ parent2 = Individual(
 
 result = crossOver(parent1, parent2);
 
-print("\n")
+print("\n");
+print(parent1._appointments());
+print(parent1._vehicles());
+print("\n");
+print(parent2._appointments());
+print(parent2._vehicles());
+print("\n");
 print(result._appointments());
 print(result._vehicles());
