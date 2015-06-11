@@ -3,7 +3,7 @@ import random
 import model
 
 
-def init(ind_class, size, nb_vehicle):
+def init(ind_class, size, nb_vehicle, data):
     """
     Initialisation operator. Fill the inidividual's first part with a random permutation of
     appointement and compute the second part with a valid vehicle count.
@@ -30,9 +30,37 @@ def init(ind_class, size, nb_vehicle):
     first_part = range(0, size)
     random.shuffle(first_part)
     
+    
+    for appointement_idx in first_part:
+        route = []
+        for vehicle_size in second_part:
+            for i in range(0, vehicle_size):
+                insert_appointment(route, appointement_idx, data)
+    
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
     return ind
+
+def insert_appointment(route, appointement_idx, list_appointment):
+    appointement_to_insert = list_appointment[appointement_idx]
+    it = 0 
+    if len(route) == 0:
+        route.append(appointement_idx)
+    elif len(route) > 1:
+        for idx in route:
+            if list_appointment[idx].starting_time > appointement_to_insert.starting_time:
+                route.insert(it, appointement_idx)
+                return
+            if it == len(route) and list_appointment[idx].starting_time < appointement_to_insert.starting_time:
+                route.append(appointement_idx)
+                return
+        it +=1
+        
+
+
+
+    
+
 
 
 def evaluate(individual, data, depot):
