@@ -1,5 +1,5 @@
 argparse==1.2.1
-deap==1.0.2
+deap==1.0.2.post2
 noise==1.2.2
 numpy==1.9.2
 turtle==0.0.2
