@@ -26,10 +26,10 @@ def main():
     IND_SIZE = num_route * num_node_per_route
 
     # Genetic parameter
-    pop_size = 3000
+    pop_size = 1000
     elite_size = 1
     crossover_probability = 0.7
-    mutation_probability = 0.1
+    mutation_probability = 0.3
     ngen = 50
     mu = pop_size
     _lambda = pop_size
@@ -58,7 +58,7 @@ def main():
 
     # Set the different genetic oprator inside the toolbox
     toolbox.register("clone", copy.deepcopy)
-    toolbox.register("mate", operators.cxRC, data=list_appointment)
+    toolbox.register("mate", operators.crossover, data=list_appointment)
     toolbox.register("mutate", operators.constrainedSwap, data=list_appointment)
     toolbox.register("select", tools.selNSGA2)
     toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot)
@@ -87,7 +87,7 @@ def main():
             ngen,
             stats=stats, 
             halloffame=hof)
-
+    
     # Create display of the problem and of the best solution  
     root = visualisation.Tk()
     root.geometry("" + str(w) + "x" + str(h))
