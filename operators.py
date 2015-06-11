@@ -37,30 +37,15 @@ def init(ind_class, size, nb_vehicle, data):
     for appointement_idx in first_part:
         route = []
         for vehicle_size in second_part:
+            mroute.append(route)
             for i in range(0, vehicle_size):
-                insert_appointment(route, appointement_idx, data)
-        mroute.append(route)
+                mroute = insert_appointment(mroute, appointement_idx, data)
     
     first_part = list(itertools.chain(*mroute))
 
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
     return ind
-
-def insert_appointment(route, appointement_idx, list_appointment):
-    appointement_to_insert = list_appointment[appointement_idx]
-    it = 0 
-    if len(route) == 0:
-        route.append(appointement_idx)
-    elif len(route) > 1:
-        for idx in route:
-            if list_appointment[idx].starting_time > appointement_to_insert.starting_time:
-                route.insert(it, appointement_idx)
-                return
-            if it == len(route) and list_appointment[idx].starting_time < appointement_to_insert.starting_time:
-                route.append(appointement_idx)
-                return
-        it +=1
 
 
 def evaluate(individual, data, depot):
@@ -95,14 +80,16 @@ def evaluate(individual, data, depot):
     return distance, load
 
 
-def insert_appointment_for_crossover(app, appList, data):
+def insert_appointment(appList, app, data):
     """
     Appointment inserting function. Insert an appointment in a 2D
     appointment list.
     """
     tmp = len(appList)
+   
     # Vehicle number
     numV = random.randrange(0, tmp)
+
     for idx in range(0, len(appList[numV])):
         if (data[appList[numV][idx]].starting_time > data[app].starting_time):
             appList[numV].insert(idx, app)
@@ -172,9 +159,9 @@ def cxRC(parent1, parent2, data):
     # Inserting back those elements in the list corresponding to the first
     # parent.
     for element in appointmentsByVehicle2[tmpSelect]:
-        appointmentsByVehicle1 = insert_appointment_for_crossover(
-                element,
+        appointmentsByVehicle1 = insert_appointment(
                 appointmentsByVehicle1,
+                element,
                 data
                 )
 
@@ -185,6 +172,7 @@ def cxRC(parent1, parent2, data):
     # offspring.
 
     child1.encode(appointmentsByVehicle1)
+
     # Yay! Offspring!
     return child1, child2
 
