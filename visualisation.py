@@ -1,5 +1,6 @@
 import model
 import random
+import genome
 
 from Tkinter import Tk, Frame, Canvas, BOTH
 from colorsys import hls_to_rgb 
@@ -7,6 +8,9 @@ from colorsys import hls_to_rgb
 rad_to_deg = lambda r : r/2/PI*360.0
 deg_to_rad = lambda r : r*2*PI/360.0
 identity = lambda r: r
+
+def translate_to_TKcolor(color):
+    return rgb_to_hex(translate_rgb(color)) 
 
 def translate(value, fromMin, fromMax, toMin, toMax):
     # Figure out how 'wide' each range is
@@ -50,7 +54,7 @@ class Example(Frame):
         
         self.initUI(list_appointement, color, depot, tour)
     
-    def initUI(self, list_appointement, color, depot, tour):
+    def initUI(self, list_appointement, color, depot, mtour):
         self.parent.title("Simple")
         self.pack(fill=BOTH, expand=1)
         canvas = Canvas(self)
@@ -66,22 +70,35 @@ class Example(Frame):
                                appointement._y(),
                                appointement._x()-3,
                                appointement._y()-3,
-                               outline=rgb_to_hex(translate_rgb(color[appointement.group])),
+                               outline=translate_to_TKcolor(color[appointement.group]),
                                fill="green",
                                width=2)
-        tour.insert(0,Appointement(depot, 0, -1))
-        draw_tour(tour, canvas)
+        
+        idx = 0
+        for tour in mtour:
+            tour.insert(0, model.Appointement(depot, 0, -1))
+            draw_tour(tour, canvas, translate_to_TKcolor(color[idx]))
+            idx += 1
+
         canvas.pack(fill=BOTH, expand=1)
 
-def draw_tour(list_coord, canvas):
+def draw_tour(list_coord, canvas, color):
     if  len(list_coord) > 2:
         for i in range(0, len(list_coord) - 1):
             canvas.create_line(list_coord[i]._x(),
                                list_coord[i]._y(),
                                list_coord[i + 1]._x(),
                                list_coord[i + 1]._y(),
-                               fill="red",
+                               fill=color,
                                dash=(4, 4))
+
+        canvas.create_line(list_coord[-1]._x(),
+                           list_coord[-1]._y(),
+                           list_coord[0]._x(),
+                           list_coord[0]._y(),
+                           fill=color,
+                           dash=(4, 4))
+
 
 def indexes_to_appointement(indexes, list_appointement):
     translated = []
@@ -90,4 +107,14 @@ def indexes_to_appointement(indexes, list_appointement):
         translated.append(list_appointement[index])
 
     return translated
+
+def individual_as_appointment(ind, list_appointement):
+    splitted_route = ind.split()
+    appointment_2D = []
+    
+    print splitted_route
+    for route in splitted_route:
+        appointment_2D.append(indexes_to_appointement(route, list_appointement))
+
+    return appointment_2D
 
