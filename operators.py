@@ -31,17 +31,20 @@ def init(ind_class, size, nb_vehicle, data):
     # Just a random permutation of indexes
     first_part = range(0, size)
     random.shuffle(first_part)
-    
-    mroute = []
 
-    for appointement_idx in first_part:
-        route = []
-        for vehicle_size in second_part:
-            mroute.append(route)
-            for i in range(0, vehicle_size):
-                mroute = insert_appointment(mroute, appointement_idx, data)
+    mroute = []
     
+    offset = 0
+
+    for vehicle_size in second_part:
+        route = []
+        for idx in range(offset, vehicle_size+offset):
+            route = insert_appointment1D(route, first_part[idx], data)
+        mroute.append(first_part[offset:offset+vehicle_size])
+        offset += vehicle_size
+
     first_part = list(itertools.chain(*mroute))
+    print(first_part)
 
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
@@ -79,14 +82,28 @@ def evaluate(individual, data, depot):
     # Return a tuple of fitness: the cost and the load 
     return distance, load
 
+def insert_appointment1D(appList, app, data):
+    """
+    Appointment inserting function. Insert an appointment in a 1D
+    appointment list.
+    """
+    # Vehicle number
+    for idx in range(0, len(appList)):
+        if (data[appList[idx]].starting_time > data[app].starting_time):
+            appList.insert(idx, app)
+            return appList
 
-def insert_appointment(appList, app, data):
+    appList.append(app)
+    return appList
+
+
+def insert_appointment2D(appList, app, data):
     """
     Appointment inserting function. Insert an appointment in a 2D
     appointment list.
     """
     tmp = len(appList)
-   
+
     # Vehicle number
     numV = random.randrange(0, tmp)
 
@@ -106,7 +123,7 @@ def cxRC(parent1, parent2, data):
 
     [1]:
     """    
-    
+
     child1 = copy.deepcopy(parent1)
     child2 = copy.deepcopy(parent2)
 
@@ -156,18 +173,18 @@ def cxRC(parent1, parent2, data):
                     [item for item in appointmentsByVehicle1[index] \
                     if item != element]
 
-    # Inserting back those elements in the list corresponding to the first
+                    # Inserting back those elements in the list corresponding to the first
     # parent.
     for element in appointmentsByVehicle2[tmpSelect]:
-        appointmentsByVehicle1 = insert_appointment(
+        appointmentsByVehicle1 = insert_appointment2D(
                 appointmentsByVehicle1,
                 element,
                 data
                 )
 
-    # print("After: ")
+        # print("After: ")
     # print(appointmentsByVehicle1)
-    
+
     # Making new vehicles containing the right number of appointments for the
     # offspring.
 
@@ -179,7 +196,7 @@ def cxRC(parent1, parent2, data):
 def crossover(parent1, parent2, data):
     child1 = cxRC(parent1, parent2, data)
     child2 = cxRC(parent2, parent1, data)
-    
+
     return child1, child2
 
 def constrainedSwap(ind, data):
