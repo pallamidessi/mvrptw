@@ -7,6 +7,7 @@ import model
 import genome
 import operators
 import copy
+import load_data
 
 from deap import base
 from deap import creator
@@ -35,7 +36,7 @@ def main():
     _lambda = pop_size
     
     # Generate a the problem's data set
-    # i.e: Generate N "route" of appointement 
+    # i.e: Generate N "route" of appointement
     list_appointment = model.generate_route(num_route, 
                                              num_node_per_route,
                                              w,
@@ -43,6 +44,8 @@ def main():
                                              depot)
     # Set the routes color  
     color = visualisation.color_group(num_route)
+
+    load_data.load_dataset('C1_4_8.TXT')
 
     # Assign the custom individual class to the toolbox
     # And set the number of wanted fitnesses 
