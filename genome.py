@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import itertools
+from operators import window_bounds_checking
 
 class MvrpIndividual(object):
     """
@@ -43,16 +44,16 @@ class MvrpIndividual(object):
         print self
         return splitted_route
 
-    def is_time_constraint_respected(self):
-        tmp = self.split()
+    def is_time_constraint_respected(self, data):
+        tmp = self.decode(data)
         result = 0
         for sublist in tmp:
             if len(sublist) != 0:
                 current = sublist[0]
-                for element in tmp:
-                    if element < current:
+                for i in range(1, len(sublist)):
+                    if not window_bounds_checking(current, sublist[i]):
                         result += 1
-                    current = element
+                    current = sublist[i]
         return result
 
     def is_load_respected(self):

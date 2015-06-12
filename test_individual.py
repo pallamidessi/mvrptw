@@ -41,7 +41,7 @@ for i in range(0, 12):
             )
     print(list_individuals[i])
     print("Time respected: ")
-    print(list_individuals[i].is_time_constraint_respected())
+    print(list_individuals[i].is_time_constraint_respected(list_appointments))
     print("Load respected: ")
     print(list_individuals[i].is_load_respected())
     print(list_individuals[i].decode(list_appointments))
