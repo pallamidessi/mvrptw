@@ -49,17 +49,20 @@ def color_group(n):
 
 class Example(Frame):
   
-    def __init__(self, parent, data, color, depot, tour):
+    def __init__(self, parent, data, color, depot, tour, zoom):
         Frame.__init__(self, parent, background="white")   
          
         self.parent = parent
         
-        self.initUI(data, color, depot, tour)
+        self.initUI(data, color, depot, tour, zoom)
     
-    def initUI(self, data, color, depot, mtour):
+    def initUI(self, data, color, depot, mtour, zoom):
         list_appointment = data["appointment"]
         self.parent.title("Simple")
         self.pack(fill=BOTH, expand=1)
+
+        depot, mtour = zoom_before_drawing(depot, mtour, zoom)
+
         canvas = Canvas(self)
         canvas.create_oval(depot._x(), 
                            depot._y(),
@@ -70,10 +73,10 @@ class Example(Frame):
                            width=3)
 
         for appointement in list_appointment:
-            canvas.create_oval(appointement._x(), 
-                               appointement._y(),
-                               appointement._x()-3,
-                               appointement._y()-3,
+            canvas.create_oval(appointement._x() * zoom, 
+                               appointement._y() * zoom,
+                               appointement._x() * zoom - 3,
+                               appointement._y() * zoom - 3,
                                outline=translate_to_TKcolor(color[appointement.group]),
                                fill="green",
                                width=2)
@@ -120,3 +123,24 @@ def individual_as_appointment(ind, list_appointement):
         appointment_2D.append(indexes_to_appointement(route, list_appointement))
 
     return appointment_2D
+
+def zoom_before_drawing(depot, list_appointment, zoom):
+    
+    list_to_return = []
+
+    for index in range(0, len(list_appointment)):
+        
+        list_to_return.append([])
+        for element in list_appointment[index]:
+            
+            new_coordinate = model.Point(element._x() * zoom, element._y() * zoom)
+            zoomed_in_appointment = model.Appointment(new_coordinate,
+                    element.starting_time,
+                    element.group,
+                    {'start' : element.window_start, 'end' : element.window_end}
+                    )
+            list_to_return[index].append(zoomed_in_appointment) 
+    
+    depot_to_return = model.Point(depot._x() * zoom, depot._y() * zoom)
+
+    return depot_to_return, list_to_return

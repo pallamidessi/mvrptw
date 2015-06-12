@@ -37,6 +37,8 @@ def main():
             help='the elite size for the GA', default=1)
     parser.add_argument('-p', '--path', metavar='dataset_path', type=str,
             help='the path of the dataset to use', default='C1_4_8.TXT')
+    parser.add_argument('-z', '--zoom', metavar='zoom', type=int,
+            help='the zooming factor for visualisation', default=3)
     args = parser.parse_args()
     
     random.seed(666)
@@ -48,6 +50,7 @@ def main():
     num_route = args.vehicle
     num_node_per_route = args.node
     IND_SIZE = num_route * num_node_per_route
+    zoom = args.zoom
 
     # Genetic parameter
     pop_size = args.size
@@ -60,11 +63,11 @@ def main():
     
     # Generate a the problem's data set
     # i.e: Generate N "route" of appointement
-    list_appointment = model.generate_route(num_route, 
-                                             num_node_per_route,
-                                             w,
-                                             h,
-                                             depot)
+    # list_appointment = model.generate_route(num_route, 
+    #                                         num_node_per_route,
+    #                                         w,
+    #                                         h,
+    #                                         depot)
     # Set the routes color  
     color = visualisation.color_group(num_route)
 
@@ -117,12 +120,13 @@ def main():
     
     # Create display of the problem and of the best solution  
     root = visualisation.Tk()
-    root.geometry("" + str(w) + "x" + str(h))
+    root.geometry(str(w) + "x" + str(h))
     app = visualisation.Example(root, 
             data_dict,
             color, 
             depot,
-            visualisation.individual_as_appointment(hof[0], data_dict["appointment"]))
+            visualisation.individual_as_appointment(hof[0], data_dict["appointment"]),
+            zoom)
 
     # Start the GUI main loop
     root.mainloop()  
