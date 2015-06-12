@@ -62,18 +62,19 @@ class MvrpIndividual(object):
         return True
 
     def decode(self, data):
+        list_appointment = data["appointment"]
         tmp = self.split()
         to_return = []
         index = 0
         for sublist in tmp:
             to_return.append([])
             for element in sublist:
-                to_return[index].append(data[element])
+                to_return[index].append(list_appointment[element])
             index += 1
         return to_return
 
-    def encode(self, data):
+    def encode(self, list_appointment2D):
         self.vehicles = []
-        for sublist in data:
+        for sublist in list_appointment2D:
             self.vehicles.append(len(sublist))
-        self.routes = list(itertools.chain.from_iterable(data))
+        self.routes = list(itertools.chain.from_iterable(list_appointment2D))

@@ -49,14 +49,15 @@ def color_group(n):
 
 class Example(Frame):
   
-    def __init__(self, parent, list_appointement, color, depot, tour):
+    def __init__(self, parent, data, color, depot, tour):
         Frame.__init__(self, parent, background="white")   
          
         self.parent = parent
         
-        self.initUI(list_appointement, color, depot, tour)
+        self.initUI(data, color, depot, tour)
     
-    def initUI(self, list_appointement, color, depot, mtour):
+    def initUI(self, data, color, depot, mtour):
+        list_appointment = data["appointment"]
         self.parent.title("Simple")
         self.pack(fill=BOTH, expand=1)
         canvas = Canvas(self)
@@ -68,7 +69,7 @@ class Example(Frame):
                            fill="green",
                            width=3)
 
-        for appointement in list_appointement:
+        for appointement in list_appointment:
             canvas.create_oval(appointement._x(), 
                                appointement._y(),
                                appointement._x()-3,

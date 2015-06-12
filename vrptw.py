@@ -35,6 +35,8 @@ def main():
             help='the probability of crossover for two individuals', default=0.7)
     parser.add_argument('-e', '--elite', metavar='elite_size', type=int,
             help='the elite size for the GA', default=1)
+    parser.add_argument('-p', '--path', metavar='dataset_path', type=str,
+            help='the path of the dataset to use', default='C1_4_8.TXT')
     args = parser.parse_args()
     
     random.seed(666)
@@ -66,7 +68,8 @@ def main():
     # Set the routes color  
     color = visualisation.color_group(num_route)
 
-    list_appointment = load_data.load_dataset('C1_4_8.TXT')
+    data_dict = {}
+    data_dict["appointment"] = load_data.load_dataset(args.path)
 
     # Assign the custom individual class to the toolbox
     # And set the number of wanted fitnesses 
@@ -77,15 +80,15 @@ def main():
     # Assign the initialisation operator to the toolbox's individual
     # And describe the population initialisation  
     toolbox.register("individual", operators.init, creator.Individual,
-                     size = IND_SIZE, nb_vehicle = num_route, data = list_appointment)
+                     size = IND_SIZE, nb_vehicle = num_route, data = data_dict)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     # Set the different genetic oprator inside the toolbox
     toolbox.register("clone", copy.deepcopy)
-    toolbox.register("mate", operators.crossover, data=list_appointment)
-    toolbox.register("mutate", operators.constrainedSwap, data=list_appointment)
+    toolbox.register("mate", operators.crossover, data=data_dict)
+    toolbox.register("mutate", operators.constrainedSwap, data=data_dict)
     toolbox.register("select", tools.selNSGA2)
-    toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot, size=IND_SIZE)
+    toolbox.register("evaluate", operators.evaluate, data=data_dict, depot=depot, size=IND_SIZE)
 
     # Create the global population
     # And an elite one  
@@ -116,10 +119,10 @@ def main():
     root = visualisation.Tk()
     root.geometry("" + str(w) + "x" + str(h))
     app = visualisation.Example(root, 
-            list_appointment,
+            data_dict,
             color, 
             depot,
-            visualisation.individual_as_appointment(hof[0], list_appointment))
+            visualisation.individual_as_appointment(hof[0], data_dict["appointment"]))
 
     # Start the GUI main loop
     root.mainloop()  
