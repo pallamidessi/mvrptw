@@ -35,15 +35,16 @@ def init(ind_class, size, nb_vehicle, data):
     mroute = []
     
     offset = 0
+    
+    #
+    #for vehicle_size in second_part:
+    #    route = []
+    #    for idx in range(offset, vehicle_size+offset):
+    #        route = insert_appointment1D(route, first_part[idx], data)
+    #    mroute.append(first_part[offset:offset+vehicle_size])
+    #    offset += vehicle_size
 
-    for vehicle_size in second_part:
-        route = []
-        for idx in range(offset, vehicle_size+offset):
-            route = insert_appointment1D(route, first_part[idx], data)
-        mroute.append(first_part[offset:offset+vehicle_size])
-        offset += vehicle_size
-
-    first_part = list(itertools.chain(*mroute))
+    #first_part = list(itertools.chain(*mroute))
 
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
@@ -59,8 +60,9 @@ def evaluate(individual, data, depot, size):
     capacity_per_vehicle = 5
     distance = 0
     load = 0
-    appointment_missing_malus = 10
-
+    malus_appointment_missing = 10
+    malus_conflict = 1000
+    
     # Split the first part of the individual as a list of route using the second part
     for vehicle_size in individual.vehicles:
         splitted_route.append(individual.routes[idx:vehicle_size])
@@ -79,8 +81,10 @@ def evaluate(individual, data, depot, size):
 
             load -= capacity_per_vehicle
 
-    distance += (size-len(individual.vehicles))*appointment_missing_malus
-
+    # Set the different feasability malus
+    distance += (size - len(individual.vehicles)) * malus_appointment_missing
+    distance += individual.is_time_constraint_respected(data) * malus_conflict
+    
     # Return a tuple of fitness: the cost and the load 
     return distance, load
 
