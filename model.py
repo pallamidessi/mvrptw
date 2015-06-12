@@ -59,9 +59,11 @@ def generate_route(n, k, height, width, starting):
             n2 = pnoise2(lastPoint._y() / height, lastPoint._x() / width)
             newx = clamp(lastPoint._x() + n1 * factor, 0, width)
             newy = clamp(lastPoint._y() + n2 * factor, 0, height)
+            window_start = random.randrange(0, 1000)
+            window_end = random.randrange(window_start+1, 2000)
             lastPoint = Point(newx, newy)
             appointement_time += random.randrange(*rand_time)
-            list_appointments.append(Appointment(lastPoint, appointement_time, i))
+            list_appointments.append(Appointment(lastPoint, appointement_time, i, {"start":window_start, "end":window_end}))
     
     return list_appointments
 
