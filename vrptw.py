@@ -65,8 +65,10 @@ def main():
                                              depot)
     # Set the routes color  
     color = visualisation.color_group(num_route)
+    
+    dataset = load_data.load_dataset('400_customers/S-C1-400/C1_4_8.TXT')
 
-    list_appointment = load_data.load_dataset('C1_4_8.TXT')
+    list_appointment = dataset["appointment"]
 
     # Assign the custom individual class to the toolbox
     # And set the number of wanted fitnesses 
