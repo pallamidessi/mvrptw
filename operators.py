@@ -17,7 +17,7 @@ def init(ind_class, size, nb_vehicle, data):
     # Create the second part of the individual
     # Choose random value while checking the upper bound
     for i in range(0, nb_vehicle):
-        vehicle_capacity = random.randrange(1, 5)
+        vehicle_capacity = random.randrange(0, (size / nb_vehicle) * 2)
         vehicle_capacity %= remaining_size
         remaining_size -= vehicle_capacity
         second_part.append(vehicle_capacity)
@@ -44,7 +44,6 @@ def init(ind_class, size, nb_vehicle, data):
         offset += vehicle_size
 
     first_part = list(itertools.chain(*mroute))
-    print(first_part)
 
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
