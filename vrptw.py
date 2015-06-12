@@ -19,21 +19,21 @@ def main():
 
     # Parsing arguments
     parser = argparse.ArgumentParser(description='Calculates optimal journeys')
-    parser.add_argument('-s', '--size', metavar='pop_size', type=int, nargs=1,
+    parser.add_argument('-s', '--size', metavar='pop_size', type=int,
             help='the population size for the GA', default=1000)
-    parser.add_argument('-ve', '--vehicle', metavar='num_route', type=int, nargs=1,
+    parser.add_argument('-ve', '--vehicle', metavar='num_route', type=int,
             help='the number of vehicles to use', default=100)
     parser.add_argument('-d', '--depot', metavar='depot', type=int, nargs=2,
             help='the coordinates of the starting point', default=[75, 75])
-    parser.add_argument('-no', '--node', metavar='num_node', type=int, nargs=1,
+    parser.add_argument('-no', '--node', metavar='num_node', type=int,
             help='the number of nodes associated with each vehicle', default=4)
-    parser.add_argument('-m', '--mutation', metavar='mutation_probability', type=int, nargs=1,
+    parser.add_argument('-m', '--mutation', metavar='mutation_probability', type=int,
             help='the probability of mutation for each individual', default=0.3)
-    parser.add_argument('-g', '--generation', metavar='ngen', type=int, nargs=1,
+    parser.add_argument('-g', '--generation', metavar='ngen', type=int,
             help='the number of generations', default=10)
-    parser.add_argument('-c', '--crossover', metavar='crossover_probability', type=int, nargs=1,
+    parser.add_argument('-c', '--crossover', metavar='crossover_probability', type=int,
             help='the probability of crossover for two individuals', default=0.7)
-    parser.add_argument('-e', '--elite', metavar='elite_size', type=int, nargs=1,
+    parser.add_argument('-e', '--elite', metavar='elite_size', type=int,
             help='the elite size for the GA', default=1)
     args = parser.parse_args()
     
