@@ -20,6 +20,7 @@ class Point(complex):
         conv = measure == "rad" and identity or rad_to_deg
         return (abs(self), conv(phase(self)))
 
+
 class Appointment():
     def __repr__(self):
         return "<Appointment coordinate:%s starting_time:%s w_start:%s w_end:%s>\n" % (self.coordinate,
@@ -40,6 +41,22 @@ class Appointment():
         self.window_end = window['end']
         self.group = group
         self.load = 1
+
+
+class Vehicle():
+    def __repr__(self):
+        return "<Vehicle idVehicle: %s count %s>\n" % (self.idVehicle,
+                                                       self.count)
+
+    def _idVehicle(self):
+        return self.idVehicle
+
+    def _count(self):
+        return self.count
+
+    def __init__(self, idVehicle, count):
+        self.idVehicle = idVehicle
+        self.count = count
 
 
 def generate_route(n, k, height, width, starting):

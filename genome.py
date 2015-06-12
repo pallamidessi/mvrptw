@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import itertools
 from operators import window_bounds_checking
+import model
 
 class MvrpIndividual(object):
     """
@@ -36,9 +37,9 @@ class MvrpIndividual(object):
         splitted_route = []
         idx = 0
 
-        for vehicle_size in self.vehicles:
-            splitted_route.append(self.routes[idx:vehicle_size + idx])
-            idx += vehicle_size
+        for vehicle in self.vehicles:
+            splitted_route.append(self.routes[idx:vehicle._count() + idx])
+            idx += vehicle._count()
 
         return splitted_route
 
@@ -75,6 +76,8 @@ class MvrpIndividual(object):
 
     def encode(self, list_appointment2D):
         self.vehicles = []
+        index = 0
         for sublist in list_appointment2D:
-            self.vehicles.append(len(sublist))
+            self.vehicles.append(model.Vehicle(index, len(sublist)))
+            index += 1
         self.routes = list(itertools.chain.from_iterable(list_appointment2D))
