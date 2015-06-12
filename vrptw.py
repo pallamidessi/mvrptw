@@ -92,10 +92,16 @@ def main():
             halloffame=hof)
     
     # Create display of the problem and of the best solution  
-    gui = visualisation.createGUI()
+    root = visualisation.Tk()
+    root.geometry("" + str(w) + "x" + str(h))
+    app = visualisation.Example(root, 
+            list_appointment,
+            color, 
+            depot,
+            visualisation.individual_as_appointment(hof[0], list_appointment))
 
     # Start the GUI main loop
-    gui.mainloop()  
+    root.mainloop()  
 
 if __name__ == '__main__':
     main()  
