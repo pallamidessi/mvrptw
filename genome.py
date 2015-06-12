@@ -40,8 +40,6 @@ class MvrpIndividual(object):
             splitted_route.append(self.routes[idx:vehicle_size + idx])
             idx += vehicle_size
 
-        print splitted_route
-        print self
         return splitted_route
 
     def is_time_constraint_respected(self, data):
