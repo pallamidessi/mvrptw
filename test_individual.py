@@ -21,10 +21,10 @@ list_appointments = model.generate_route(12,
         model.Point(500, 500))
 
 list_individuals = []
-print("Dataset:\n")
+# print("Dataset:\n")
 for i in range(0, 12):
-    print("Appointments: ")
-    print(list_appointments)
+    # print("Appointments: ")
+    # print(list_appointments)
     offset = 0
     list_routes = []
     vehicle_list = list_order[i]
@@ -39,12 +39,12 @@ for i in range(0, 12):
                     list_order[i]]
                 )
             )
-    print(list_individuals[i])
-    print("Time respected: ")
-    print(list_individuals[i].is_time_constraint_respected())
-    print("Load respected: ")
-    print(list_individuals[i].is_load_respected())
-    print(list_individuals[i].decode(list_appointments))
+    print(str(list_individuals[i].decode(list_appointments)) + " " + str(list_individuals[i].is_time_constraint_respected(list_appointments)))
+    #print("Time respected: ")
+    #print(list_individuals[i].is_time_constraint_respected(list_appointments))
+    #print("Load respected: ")
+    #print(list_individuals[i].is_load_respected())
+    #print(list_individuals[i].decode(list_appointments))
 
 random_data = [[1, 2, 3], [17, 28, 53, 48, 2], [58, 4, 1, 2]]
 test_value = genome.MvrpIndividual([0, 1])
