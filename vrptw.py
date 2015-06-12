@@ -19,18 +19,18 @@ def main():
     random.seed(666)
 
     # Problem's definition  
-    depot = model.Point(500, 500)
-    w = 1000
-    h = 1000
-    num_route = 2
-    num_node_per_route = 5
+    depot = model.Point(75, 75)
+    w = 300
+    h = 300
+    num_route = 100
+    num_node_per_route = 4
     IND_SIZE = num_route * num_node_per_route
 
     # Genetic parameter
     pop_size = 1000
     elite_size = 1
     crossover_probability = 0.7
-    mutation_probability = 0.3
+    mutation_probability = 0
     ngen = 50
     mu = pop_size
     _lambda = pop_size
@@ -45,7 +45,7 @@ def main():
     # Set the routes color  
     color = visualisation.color_group(num_route)
 
-    load_data.load_dataset('C1_4_8.TXT')
+    list_appointment = load_data.load_dataset('C1_4_8.TXT')
 
     # Assign the custom individual class to the toolbox
     # And set the number of wanted fitnesses 
