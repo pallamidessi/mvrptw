@@ -7,7 +7,7 @@ import itertools
 
 def init(ind_class, size, nb_vehicle, data):
     """
-    Initialisation operator. Fill the inidividual's first part with a random permutation of
+    Initialisation operator. Fill the individual's first part with a random permutation of
     appointement and compute the second part with a valid vehicle count.
     """
     remaining_size = size 
@@ -17,7 +17,7 @@ def init(ind_class, size, nb_vehicle, data):
     # Create the second part of the individual
     # Choose random value while checking the upper bound
     for i in range(0, nb_vehicle):
-        vehicle_capacity = random.randrange(1, 5)
+        vehicle_capacity = random.randrange(1, size/nb_vehicle*2)
         vehicle_capacity %= remaining_size
         remaining_size -= vehicle_capacity
         second_part.append(vehicle_capacity)
@@ -59,7 +59,7 @@ def evaluate(individual, data, depot, size):
     capacity_per_vehicle = 5
     distance = 0
     load = 0
-    appointment_missing_malus = 10
+    appointment_missing_malus = 100
 
     # Split the first part of the individual as a list of route using the second part
     for vehicle_size in individual.vehicles:
@@ -84,17 +84,22 @@ def evaluate(individual, data, depot, size):
     # Return a tuple of fitness: the cost and the load 
     return distance, load
 
-def window_bounds_checking(data1, data2):
+def window_bounds_checking(app1, app2):
     """
-    Checks whether data2 is contained within data1.
+    Checks whether app2 is contained within app1.
     This function is used during insertion, and is therefore
-    solely called in order to check whether inserting data1
-    before data2 is possible.
+    solely called in order to check whether inserting app1
+    before app2 is possible.
     """
-    if (data1.window_end > data2.window_end):
-          return False
-    return True
+    
+    # Checking whether app1 is before app2 (which is a constraint in this
+    # case.
+    if (app1.window_start > app2.window_start):
+	return False
 
+    if (app1.window_end > app2.window_end):
+	return False
+    return True
 
 def insert_appointment1D(appList, app, data):
     """
@@ -133,7 +138,7 @@ def insert_appointment2D(appList, app, data):
     for idx in range(0, len(appList[numV])):
         # Sorting using data_element.window_start
         if (data[appList[numV][idx]].window_start > data[app].window_start):
-            # Checking if the bounds ae valid
+            # Checking if the bounds are valid
             if window_bounds_checking(data[app], data[appList[numV][idx]]):
                 appList[numV].insert(idx, app)
                 return appList
