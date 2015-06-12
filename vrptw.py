@@ -7,12 +7,13 @@ import model
 import genome
 import operators
 import copy
+import algorithms
 import load_data
 
 from deap import base
 from deap import creator
 from deap import tools
-from deap import algorithms
+#from deap import algorithms
 
 
 def main():
@@ -41,7 +42,7 @@ def main():
             help='the zooming factor for visualisation', default=3)
     args = parser.parse_args()
     
-    random.seed(666)
+    random.seed(490)
 
     # Problem's definition  
     depot = model.Point(args.depot[0], args.depot[1])
@@ -99,6 +100,8 @@ def main():
     pop = toolbox.population(n=pop_size)
     hof = tools.HallOfFame(elite_size)
 
+    #toolbox.decorate()
+
     # Create a statistic module to display stats at each generation 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean, axis=0)
@@ -106,8 +109,10 @@ def main():
     stats.register("min", numpy.min, axis=0)
     stats.register("max", numpy.max, axis=0)
 
+    root = visualisation.Tk()
+    root.geometry(str(w) + "x" + str(h))
 
-    # The genetic alogorithm in itself 
+    # The genetic algorithm in itself 
     algorithms.eaMuPlusLambda(pop, 
             toolbox,
             mu,
@@ -115,18 +120,21 @@ def main():
             crossover_probability,
             mutation_probability,
             ngen,
+            root,
+            data_dict,
+            color,
+            depot,
+            zoom,
             stats=stats, 
             halloffame=hof)
     
     # Create display of the problem and of the best solution  
-    root = visualisation.Tk()
-    root.geometry(str(w) + "x" + str(h))
     app = visualisation.Example(root, 
-            data_dict,
-            color, 
-            depot,
-            visualisation.individual_as_appointment(hof[0], data_dict["appointment"]),
-            zoom)
+           data_dict,
+           color, 
+           depot,
+           visualisation.individual_as_appointment(hof[0], data_dict["appointment"]),
+           zoom)
 
     # Start the GUI main loop
     root.mainloop()  

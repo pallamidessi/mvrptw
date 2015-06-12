@@ -20,12 +20,12 @@ def init(ind_class, size, nb_vehicle, data):
         vehicle_capacity = random.randrange(1, (size / nb_vehicle) * 2)
         vehicle_capacity %= remaining_size
         remaining_size -= vehicle_capacity
-        second_part.append(vehicle_capacity)
+        second_part.append(model.Vehicle(i, vehicle_capacity))
 
     # If there is still unassignated vehicles at the end
     # Assigned them to the last vehicle
     if remaining_size > 0:
-        second_part[-1] += remaining_size
+        second_part[-1].count += remaining_size
 
     # Create the first part of the chromosome 
     # Just a random permutation of indexes
@@ -65,19 +65,19 @@ def evaluate(individual, data, depot, size):
     list_appointment = data["appointment"]
 
     # Split the first part of the individual as a list of route using the second part
-    for vehicle_size in individual.vehicles:
-        splitted_route.append(individual.routes[idx:vehicle_size])
-        idx += vehicle_size
+    for vehicle in individual.vehicles:
+        splitted_route.append(individual.routes[idx:vehicle._count()])
+        idx += vehicle._count()
 
     # For each vehicle (route)
     # Compute the distance travelled and the load 
     for route in splitted_route:
         if len(route) > 0:
             distance += model.euclidian_distance(depot, list_appointment[route[0]])
-            for gene1, gene2 in zip(route[0:-1], route[1:]):
+            for gene1, gene2 in zip(route[:-1], route[1:]):
                 distance += model.euclidian_distance(list_appointment[gene1], list_appointment[gene2])
 
-            for gene1, gene2 in zip(route[0:-1], route[1:]):
+            for gene1, gene2 in zip(route[:-1], route[1:]):
                 load += 1
 
             load -= capacity_per_vehicle
@@ -220,8 +220,8 @@ def cxRC(parent1, parent2, data):
     # Getting lists of lists containing all the appointments sorted by vehicle
     for i in range(0, tmpLen):
 
-        newOffset1 = offset1 + parent1.vehicles[i]
-        newOffset2 = offset2 + parent2.vehicles[i]
+        newOffset1 = offset1 + parent1.vehicles[i]._count()
+        newOffset2 = offset2 + parent2.vehicles[i]._count()
 
         appointmentsByVehicle1.append(
                 parent1.routes[offset1:newOffset1]
@@ -248,7 +248,7 @@ def cxRC(parent1, parent2, data):
                     [item for item in appointmentsByVehicle1[index] \
                     if item != element]
 
-                    # Inserting back those elements in the list corresponding to the first
+    # Inserting back those elements in the list corresponding to the first
     # parent.
     for element in appointmentsByVehicle2[tmpSelect]:
         appointmentsByVehicle1 = insert_appointment2D(
@@ -257,7 +257,7 @@ def cxRC(parent1, parent2, data):
                 data
                 )
 
-        # print("After: ")
+    # print("After: ")
     # print(appointmentsByVehicle1)
 
     # Making new vehicles containing the right number of appointments for the
@@ -284,9 +284,9 @@ def constrainedSwap(ind, data):
     idx = 0 
 
     # Split the first part of the individual as a list route using the second part
-    for vehicle_size in ind.vehicles:
-        splitted_route.append(ind.routes[idx:vehicle_size])
-        idx += vehicle_size
+    for vehicle in ind.vehicles:
+        splitted_route.append(ind.routes[idx:vehicle._count()])
+        idx += vehicle._count()
 
     # Randomly choose a non-empty route
     while True:
