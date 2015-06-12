@@ -19,11 +19,11 @@ def main():
     random.seed(666)
 
     # Problem's definition  
-    depot = model.Point(500, 500)
-    w = 1000
-    h = 1000
-    num_route = 50
-    num_node_per_route = 8
+    depot = model.Point(75, 75)
+    w = 300
+    h = 300
+    num_route = 100
+    num_node_per_route = 4
     IND_SIZE = num_route * num_node_per_route
 
     # Genetic parameter
