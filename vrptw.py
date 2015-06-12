@@ -64,7 +64,7 @@ def main():
     toolbox.register("mate", operators.crossover, data=list_appointment)
     toolbox.register("mutate", operators.constrainedSwap, data=list_appointment)
     toolbox.register("select", tools.selNSGA2)
-    toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot)
+    toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot, size=IND_SIZE)
 
     # Create the global population
     # And an elite one  

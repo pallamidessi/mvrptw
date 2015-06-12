@@ -65,6 +65,7 @@ class Example(Frame):
                            outline="black",
                            fill="green",
                            width=3)
+
         for appointement in list_appointement:
             canvas.create_oval(appointement._x(), 
                                appointement._y(),
