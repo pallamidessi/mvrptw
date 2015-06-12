@@ -22,15 +22,15 @@ def main():
     depot = model.Point(500, 500)
     w = 1000
     h = 1000
-    num_route = 2
-    num_node_per_route = 5
+    num_route = 50
+    num_node_per_route = 8
     IND_SIZE = num_route * num_node_per_route
 
     # Genetic parameter
     pop_size = 1000
     elite_size = 1
     crossover_probability = 0.7
-    mutation_probability = 0.3
+    mutation_probability = 0
     ngen = 50
     mu = pop_size
     _lambda = pop_size
@@ -45,7 +45,7 @@ def main():
     # Set the routes color  
     color = visualisation.color_group(num_route)
 
-    load_data.load_dataset('C1_4_8.TXT')
+    list_appointment = load_data.load_dataset('C1_4_8.TXT')
 
     # Assign the custom individual class to the toolbox
     # And set the number of wanted fitnesses 
@@ -64,7 +64,7 @@ def main():
     toolbox.register("mate", operators.crossover, data=list_appointment)
     toolbox.register("mutate", operators.constrainedSwap, data=list_appointment)
     toolbox.register("select", tools.selNSGA2)
-    toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot)
+    toolbox.register("evaluate", operators.evaluate, data=list_appointment, depot=depot, size=IND_SIZE)
 
     # Create the global population
     # And an elite one  

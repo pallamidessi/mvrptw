@@ -45,14 +45,15 @@ class MvrpIndividual(object):
 
     def is_time_constraint_respected(self):
         tmp = self.split()
+        result = 0
         for sublist in tmp:
             if len(sublist) != 0:
                 current = sublist[0]
                 for element in tmp:
                     if element < current:
-                        return False
+                        result += 1
                     current = element
-        return True
+        return result
 
     def is_load_respected(self):
         tmp = self.split()

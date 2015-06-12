@@ -44,14 +44,13 @@ def init(ind_class, size, nb_vehicle, data):
         offset += vehicle_size
 
     first_part = list(itertools.chain(*mroute))
-    print(first_part)
 
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
     return ind
 
 
-def evaluate(individual, data, depot):
+def evaluate(individual, data, depot, size):
     """
     Evaluate the genome.
     """
@@ -60,6 +59,7 @@ def evaluate(individual, data, depot):
     capacity_per_vehicle = 5
     distance = 0
     load = 0
+    appointment_missing_malus = 10
 
     # Split the first part of the individual as a list of route using the second part
     for vehicle_size in individual.vehicles:
@@ -78,6 +78,8 @@ def evaluate(individual, data, depot):
                 load += 1
 
             load -= capacity_per_vehicle
+
+    distance += (size-len(individual.vehicles))*appointment_missing_malus
 
     # Return a tuple of fitness: the cost and the load 
     return distance, load
@@ -110,6 +112,8 @@ def insert_appointment1D(appList, app, data):
             if window_bounds_checking(data[appList[numV][idx]], data[app]):
                 appList[numV].append(app)
                 return appList
+
+    # print("DIE IN 1D!")
     return appList
 
 
@@ -140,6 +144,7 @@ def insert_appointment2D(appList, app, data):
                 new_numV = choosing_a_new_index(numV, tested_values, tmp)
                 
                 if numV == new_numV:
+                    # print("DIE IN 2D!")
                     return appList
                 tested_values += 1
                 numV = new_numV
@@ -153,10 +158,12 @@ def insert_appointment2D(appList, app, data):
                 new_numV = choosing_a_new_index(numV, tested_values, tmp)
 
                 if numV == new_numV:
+                    # print("DIE IN 2D!")
                     return appList
                 tested_values += 1
                 numV = new_numV
-
+    
+    # print("DIE IN 2D!")
     return appList
 
 def choosing_a_new_index(numV, tested_values, length):
