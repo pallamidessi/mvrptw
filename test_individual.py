@@ -46,7 +46,8 @@ for i in range(0, 12):
     #print(list_individuals[i].is_load_respected())
     #print(list_individuals[i].decode(list_appointments))
 
-random_data = [[1, 2, 3], [17, 28, 53, 48, 2], [58, 4, 1, 2]]
+random_data = [[1, 2, 3], [4, 5, 6, 7, 8], [9, 10, 12, 11]]
 test_value = genome.MvrpIndividual([0, 1])
 test_value.encode(random_data)
+print(random_data)
 print(test_value)

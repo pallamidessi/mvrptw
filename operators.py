@@ -62,6 +62,7 @@ def evaluate(individual, data, depot, size):
     load = 0
     malus_appointment_missing = 10
     malus_conflict = 1000
+    list_appointment = data["appointment"]
 
     # Split the first part of the individual as a list of route using the second part
     for vehicle_size in individual.vehicles:
@@ -72,9 +73,9 @@ def evaluate(individual, data, depot, size):
     # Compute the distance travelled and the load 
     for route in splitted_route:
         if len(route) > 0:
-            distance += model.euclidian_distance(depot, data[route[0]])
+            distance += model.euclidian_distance(depot, list_appointment[route[0]])
             for gene1, gene2 in zip(route[0:-1], route[1:]):
-                distance += model.euclidian_distance(data[gene1], data[gene2])
+                distance += model.euclidian_distance(list_appointment[gene1], list_appointment[gene2])
 
             for gene1, gene2 in zip(route[0:-1], route[1:]):
                 load += 1
@@ -110,15 +111,16 @@ def insert_appointment1D(appList, app, data):
     Appointment inserting function. Insert an appointment in a 1D
     appointment list.
     """
+    list_appointment = data["appointment"]
     # Vehicle number
     for idx in range(0, len(appList)):
-        if (data[appList[idx]].window_start > data[app].window_start):
-            if window_bounds_checking(data[app], data[appList[numV][idx]]):
+        if (list_appointment[appList[idx]].window_start > list_appointment[app].window_start):
+            if window_bounds_checking(list_appointment[app], list_appointment[appList[numV][idx]]):
                 appList.insert(idx, app)
                 return appList
 
         if idx == (len(appList)-1):
-            if window_bounds_checking(data[appList[numV][idx]], data[app]):
+            if window_bounds_checking(list_appointment[appList[numV][idx]], list_appointment[app]):
                 appList[numV].append(app)
                 return appList
 
@@ -132,6 +134,7 @@ def insert_appointment2D(appList, app, data):
     appointment list.
     """
     tmp = len(appList)
+    list_appointment = data["appointment"]
 
     # Vehicle index
     numV = random.randrange(0, tmp)
@@ -141,9 +144,9 @@ def insert_appointment2D(appList, app, data):
 
     for idx in range(0, len(appList[numV])):
         # Sorting using data_element.window_start
-        if (data[appList[numV][idx]].window_start > data[app].window_start):
+        if (list_appointment[appList[numV][idx]].window_start > list_appointment[app].window_start):
             # Checking if the bounds are valid
-            if window_bounds_checking(data[app], data[appList[numV][idx]]):
+            if window_bounds_checking(list_appointment[app], list_appointment[appList[numV][idx]]):
                 appList[numV].insert(idx, app)
                 return appList
             # Bounds are invalid, let's try something else
@@ -159,7 +162,7 @@ def insert_appointment2D(appList, app, data):
                 numV = new_numV
 
         if idx == (len(appList[numV])-1):
-            if window_bounds_checking(data[appList[numV][idx]], data[app]):
+            if window_bounds_checking(list_appointment[appList[numV][idx]], list_appointment[app]):
                 appList[numV].append(app)
                 return appList
             else:
@@ -276,7 +279,7 @@ def constrainedSwap(ind, data):
     A random swap following constraints.
     Need pretty heavy refactoring 
     """
-    list_appointment = data
+    list_appointment = data["appointment"]
     splitted_route = []
     idx = 0 
 
