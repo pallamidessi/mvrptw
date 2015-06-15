@@ -8,6 +8,7 @@ import model
 import copy
 #import itertools
 
+
 def init(ind_class, size, nb_vehicle):
     """
     Initialisation operator.
@@ -78,13 +79,13 @@ def evaluate(individual, data, depot, size):
     for route in splitted_route:
         if len(route) > 0:
             distance += model.euclidian_distance(
-                    depot,
-                    list_appointment[route[0]])
+                depot,
+                list_appointment[route[0]])
 
             for gene1, gene2 in zip(route[:-1], route[1:]):
                 distance += model.euclidian_distance(
-                        list_appointment[gene1],
-                        list_appointment[gene2])
+                    list_appointment[gene1],
+                    list_appointment[gene2])
 
             for gene1, gene2 in zip(route[:-1], route[1:]):
                 load += 1
@@ -93,12 +94,13 @@ def evaluate(individual, data, depot, size):
 
     # Set the different feasability malus
     distance += (size - len(individual.vehicles)) * \
-            malus['missing_appointment']
+        malus['missing_appointment']
     distance += individual.is_time_constraint_respected(data) * \
-            malus['conflict']
+        malus['conflict']
 
     # Return a tuple of fitness: the cost and the load
     return distance, load
+
 
 def window_bounds_checking(app1, app2):
     """
@@ -116,6 +118,7 @@ def window_bounds_checking(app1, app2):
     if app1.window_end > app2.window_end:
         return False
     return True
+
 
 def insert_appointment1d(app_list, app, data):
     """
@@ -199,6 +202,7 @@ def insert_appointment2d(app_list, app, data):
     # print("DIE IN 2D!")
     return app_list
 
+
 def choosing_a_new_index(num_v, tested_values, length):
     """
     If there're still vehicles the function hasn't tried
@@ -243,12 +247,12 @@ def cx_rc(parent1, parent2, data):
         new_offset2 = offset2 + parent2.vehicles[i].count()
 
         appointments_by_vehicle1.append(
-                parent1.routes[offset1:new_offset1]
-                )
+            parent1.routes[offset1:new_offset1]
+        )
 
         appointments_by_vehicle2.append(
-                parent2.routes[offset2:new_offset2]
-                )
+            parent2.routes[offset2:new_offset2]
+        )
 
         offset1 = new_offset1
         offset2 = new_offset2
@@ -264,17 +268,17 @@ def cx_rc(parent1, parent2, data):
     for element in appointments_by_vehicle2[tmp_select]:
         for index in range(0, len(parent1.vehicles)):
             appointments_by_vehicle1[index] = \
-                    [item for item in appointments_by_vehicle1[index] \
+                [item for item in appointments_by_vehicle1[index]
                     if item != element]
 
     # Inserting back those elements in the list corresponding to the first
     # parent.
     for element in appointments_by_vehicle2[tmp_select]:
         appointments_by_vehicle1 = insert_appointment2d(
-                appointments_by_vehicle1,
-                element,
-                data
-                )
+            appointments_by_vehicle1,
+            element,
+            data
+        )
 
     # print("After: ")
     # print(appointments_by_vehicle1)
@@ -287,6 +291,7 @@ def cx_rc(parent1, parent2, data):
     # Yay! Offspring!
     return child1
 
+
 def crossover(parent1, parent2, data):
     """
     Uses cx_rc to get children from parent1 and parent2.
@@ -295,6 +300,7 @@ def crossover(parent1, parent2, data):
     child2 = cx_rc(parent2, parent1, data)
 
     return child1, child2
+
 
 def constrained_swap(ind, data):
     """
@@ -330,8 +336,8 @@ def constrained_swap(ind, data):
             counter = 0
             for appointement_idx in splitted_route[i]:
 
-                # If the next element in the list start after the one we want to
-                # insert, we emplace it here, and delete it from where we took
+                # If the next element in the list start after the one we want
+                # to insert, we place it here, and delete it from where we took
                 # it
                 if list_appointment[appointement_idx].starting_time > \
                         list_appointment[rand_appointement]:
@@ -350,4 +356,3 @@ def constrained_swap(ind, data):
                         return ind,
 
     return ind,
-

@@ -7,6 +7,7 @@ import itertools
 from operators import window_bounds_checking
 import model
 
+
 class MvrpIndividual(object):
     """
     Genome definition. The genome is implemented a two-part chromosome

@@ -16,11 +16,13 @@ from colorsys import hls_to_rgb
 #DEG_TO_RAD = lambda r: r*2*pi/360.0
 #IDENTITY = lambda r: r
 
+
 def translate_to_tkcolor(color):
     """
     Translates the color passed as an argument to hex.
     """
     return rgb_to_hex(translate_rgb(color))
+
 
 def translate(value, from_min, from_max, to_min, to_max):
     """
@@ -37,6 +39,7 @@ def translate(value, from_min, from_max, to_min, to_max):
     # Convert the 0-1 range into a value in the right range.
     return to_min + (value_scaled * right_span)
 
+
 def translate_rgb(rgb_tuple):
     """
     Translates a rgb tuple to the same tuple from the range 0-1 to the range
@@ -48,11 +51,13 @@ def translate_rgb(rgb_tuple):
 
     return tuple(mapped_rgb_value)
 
+
 def rgb_to_hex(rgb):
     """
     Translates a RGB color to its hex format.
     """
     return '#%02x%02x%02x' % rgb
+
 
 def color_group(max_range):
     """
@@ -68,6 +73,7 @@ def color_group(max_range):
         generated_color.append(hls_to_rgb(color_value, 0.5, 0.95))
 
     return generated_color
+
 
 class Example(Frame):
     """
@@ -114,13 +120,13 @@ class Example(Frame):
 
         for appointement in list_appointment:
             canvas.create_oval(
-                    appointement.get_x() * zoom,
-                    appointement.get_y() * zoom,
-                    appointement.get_x() * zoom - 3,
-                    appointement.get_y() * zoom - 3,
-                    outline=translate_to_tkcolor(color[appointement.group()]),
-                    fill="green",
-                    width=2)
+                appointement.get_x() * zoom,
+                appointement.get_y() * zoom,
+                appointement.get_x() * zoom - 3,
+                appointement.get_y() * zoom - 3,
+                outline=translate_to_tkcolor(color[appointement.group()]),
+                fill="green",
+                width=2)
 
         idx = 0
         for tour in mtour:
@@ -130,12 +136,13 @@ class Example(Frame):
 
         canvas.pack(fill=BOTH, expand=1)
 
+
 def draw_tour(list_coord, canvas, color):
     """
     Draws the tour passed as a parameter on the canvas using the color also
     passed as a parameter.
     """
-    if  len(list_coord) > 2:
+    if len(list_coord) > 2:
         for i in range(0, len(list_coord) - 1):
             canvas.create_line(list_coord[i].get_x(),
                                list_coord[i].get_y(),
@@ -164,6 +171,7 @@ def indexes_to_appointement(indices, list_appointment):
 
     return translated
 
+
 def individual_as_appointment(ind, list_appointement):
     """
     Transforms an individual into an appointment 2d list.
@@ -172,9 +180,12 @@ def individual_as_appointment(ind, list_appointement):
     appointment_2d = []
 
     for route in splitted_route:
-        appointment_2d.append(indexes_to_appointement(route, list_appointement))
+        appointment_2d.append(indexes_to_appointement(
+            route,
+            list_appointement))
 
     return appointment_2d
+
 
 def zoom_before_drawing(depot, list_appointment, zoom):
     """
@@ -189,15 +200,16 @@ def zoom_before_drawing(depot, list_appointment, zoom):
         for element in list_appointment[index]:
 
             new_coordinate = model.Point(
-                    element.get_x() * zoom,
-                    element.get_y() * zoom
-                    )
+                element.get_x() * zoom,
+                element.get_y() * zoom
+            )
 
-            zoomed_in_appointment = model.Appointment(new_coordinate,
-                    element.starting_time,
-                    element.group(),
-                    {'start' : element.window_start, 'end' : element.window_end}
-                    )
+            zoomed_in_appointment = model.Appointment(
+                new_coordinate,
+                element.starting_time,
+                element.group(),
+                {'start': element.window_start, 'end': element.window_end}
+            )
             list_to_return[index].append(zoomed_in_appointment)
 
     depot_to_return = model.Point(depot.get_x() * zoom, depot.get_y() * zoom)

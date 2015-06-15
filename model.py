@@ -10,6 +10,7 @@ from math import sqrt
 
 CLAMP = lambda n, minn, maxn: max(min(maxn, n), minn)
 
+
 class Point(complex):
     """
     This class describes a 2D point based on the 'complex' class.
@@ -61,13 +62,13 @@ class Appointment(object):
 
     def __repr__(self):
         return "<Appointment coordinate:%s starting_time:%s w_start:%s \
-                w_end:%s>\n" % \
-                (
-                        self.coordinate,
-                        self.starting_time,
-                        self.window_start,
-                        self.window_end
-                        )
+            w_end:%s>\n" % \
+            (
+                self.coordinate,
+                self.starting_time,
+                self.window_start,
+                self.window_end
+                )
 
     def get_x(self):
         """
@@ -112,8 +113,9 @@ class Vehicle(object):
     """
 
     def __repr__(self):
-        return "<Vehicle _id_vehicle: %s _count %s>\n" % (self._id_vehicle,
-                self._count)
+        return "<Vehicle _id_vehicle: %s _count %s>\n" % (
+            self._id_vehicle,
+            self._count)
 
     def id_vehicle(self):
         """
@@ -137,6 +139,7 @@ class Vehicle(object):
         self._id_vehicle = id_vehicle
         self._count = count
 
+
 def make_last_point(last_point, width, height, factor):
     """
     Generates a new last point in order to help with the route generation.
@@ -148,12 +151,13 @@ def make_last_point(last_point, width, height, factor):
     - factor (a user-chosen factor)
     """
     newx = \
-	pnoise2(last_point.get_x() / width, last_point.get_y() / height)
+        pnoise2(last_point.get_x() / width, last_point.get_y() / height)
     newy = \
-	pnoise2(last_point.get_y() / height, last_point.get_x() / width)
+        pnoise2(last_point.get_y() / height, last_point.get_x() / width)
     newx = CLAMP(last_point.get_x() + newx * factor, 0, width)
     newy = CLAMP(last_point.get_y() + newy * factor, 0, height)
     return Point(newx, newy)
+
 
 def generate_route(nb_routes, k, height, width, starting):
     """
@@ -164,16 +168,17 @@ def generate_route(nb_routes, k, height, width, starting):
     list_appointments = []
     rand_window_factor = 10
     rand_window = {
-            'h':height / rand_window_factor,
-            'w':width / rand_window_factor
-            }
+        'h': height / rand_window_factor,
+        'w': width / rand_window_factor
+        }
     rand_time = (0, 100)
 
     for i in range(0, nb_routes):
-        last_point = Point(starting.get_x() + \
-                random.randrange(-rand_window['w'], rand_window['w']),
-                starting.get_y() + \
-                        random.randrange(-rand_window['h'], rand_window['h']))
+        last_point = Point(
+            starting.get_x() +
+            random.randrange(-rand_window['w'], rand_window['w']),
+            starting.get_y() +
+            random.randrange(-rand_window['h'], rand_window['h']))
 
         appointement_time = 0
         for _ in range(0, k):
@@ -181,23 +186,24 @@ def generate_route(nb_routes, k, height, width, starting):
             window_start = random.randrange(0, 1000)
             appointement_time += random.randrange(rand_time[0], rand_time[1])
             list_appointments.append(
-                    Appointment(
-                        last_point,
-                        appointement_time,
-                        i,
-                        {
-                            "start":window_start,
-                            "end":random.randrange(window_start+1, 2000)
-                            }
-                        )
+                Appointment(
+                    last_point,
+                    appointement_time,
+                    i,
+                    {
+                        "start": window_start,
+                        "end": random.randrange(window_start+1, 2000)
+                        }
                     )
+                )
 
     return list_appointments
+
 
 def euclidian_distance(point1, point2):
     """
     Calculates the euclidian distance between point1 and point2.
     """
-    return sqrt((point1.get_x() - point2.get_x())**2 + \
-            ((point1.get_y() - point2.get_y())**2))
-
+    return sqrt(
+        (point1.get_x() - point2.get_x())**2 +
+        ((point1.get_y() - point2.get_y())**2))

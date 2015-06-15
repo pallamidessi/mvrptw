@@ -5,6 +5,7 @@ File containing functions used for file loading.
 import model
 import numpy
 
+
 def load_dataset(name):
     """
     Loads the dataset passed as a parameter.
@@ -41,9 +42,6 @@ def load_dataset(name):
                 {'start': parameters[4], 'end': parameters[5]},
                 1))
 
-    return {'appointment' : list_appointment,
-            'xrange' : (minx, maxx),
-            'yrange' :(miny, maxy)}
-
-
-
+    return {'appointment': list_appointment,
+            'xrange': (minx, maxx),
+            'yrange': (miny, maxy)}

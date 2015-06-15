@@ -19,6 +19,7 @@ from deap import creator
 from deap import tools
 from deap import algorithms
 
+
 def init_toolbox(ind_size, num_route, data_dict, depot):
     """
     Initializes the toolbox used for the genetic algorithm.
@@ -28,14 +29,15 @@ def init_toolbox(ind_size, num_route, data_dict, depot):
     toolbox = base.Toolbox()
     creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -1.0))
     creator.create(
-            "Individual",
-            genome.MvrpIndividual,
-            fitness=creator.FitnessMulti)
+        "Individual",
+        genome.MvrpIndividual,
+        fitness=creator.FitnessMulti)
 
     # Assign the initialisation operator to the toolbox's individual
     # And describe the population initialisation
-    toolbox.register("individual", operators.init, creator.Individual,
-            size=ind_size, nb_vehicle=num_route)
+    toolbox.register(
+        "individual", operators.init, creator.Individual,
+        size=ind_size, nb_vehicle=num_route)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     # Set the different genetic oprator inside the toolbox
@@ -43,10 +45,12 @@ def init_toolbox(ind_size, num_route, data_dict, depot):
     toolbox.register("mate", operators.crossover, data=data_dict)
     toolbox.register("mutate", operators.constrained_swap, data=data_dict)
     toolbox.register("select", tools.selNSGA2)
-    toolbox.register("evaluate", operators.evaluate, data=data_dict,
-            depot=depot, size=ind_size)
+    toolbox.register(
+        "evaluate", operators.evaluate, data=data_dict,
+        depot=depot, size=ind_size)
 
     return toolbox
+
 
 def init_parser():
     """
@@ -54,30 +58,41 @@ def init_parser():
     """
     # Parsing arguments
     parser = argparse.ArgumentParser(description='Calculates optimal journeys')
-    parser.add_argument('-s', '--size', metavar='pop_size', type=int,
-            help='the population size for the GA', default=1000)
-    parser.add_argument('-ve', '--vehicle', metavar='num_route', type=int,
-            help='the number of vehicles to use', default=100)
-    parser.add_argument('-d', '--depot', metavar='depot', type=int, nargs=2,
-            help='the coordinates of the starting point', default=[75, 75])
-    parser.add_argument('-no', '--node', metavar='num_node', type=int,
-            help='the number of nodes associated with each vehicle', default=4)
-    parser.add_argument('-m', '--mutation', metavar='mutation_probability',
-            type=int, help='the probability of mutation for each individual',
-            default=0.3)
-    parser.add_argument('-g', '--generation', metavar='ngen', type=int,
-            help='the number of generations', default=10)
-    parser.add_argument('-c', '--crossover', metavar='crossover_probability',
-            type=int, help='the probability of crossover for two individuals',
-            default=0.7)
-    parser.add_argument('-e', '--elite', metavar='elite_size', type=int,
-            help='the elite size for the GA', default=1)
-    parser.add_argument('-p', '--path', metavar='dataset_path', type=str,
-            help='the path of the dataset to use',
-            default='400_customers/S-C1-400/C1_4_8.TXT')
-    parser.add_argument('-z', '--zoom', metavar='zoom', type=int,
-            help='the zooming factor for visualisation', default=3)
+    parser.add_argument(
+        '-s', '--size', metavar='pop_size', type=int,
+        help='the population size for the GA', default=1000)
+    parser.add_argument(
+        '-ve', '--vehicle', metavar='num_route', type=int,
+        help='the number of vehicles to use', default=100)
+    parser.add_argument(
+        '-d', '--depot', metavar='depot', type=int, nargs=2,
+        help='the coordinates of the starting point', default=[75, 75])
+    parser.add_argument(
+        '-no', '--node', metavar='num_node', type=int,
+        help='the number of nodes associated with each vehicle', default=4)
+    parser.add_argument(
+        '-m', '--mutation', metavar='mutation_probability',
+        type=int, help='the probability of mutation for each individual',
+        default=0.3)
+    parser.add_argument(
+        '-g', '--generation', metavar='ngen', type=int,
+        help='the number of generations', default=10)
+    parser.add_argument(
+        '-c', '--crossover', metavar='crossover_probability',
+        type=int, help='the probability of crossover for two individuals',
+        default=0.7)
+    parser.add_argument(
+        '-e', '--elite', metavar='elite_size', type=int,
+        help='the elite size for the GA', default=1)
+    parser.add_argument(
+        '-p', '--path', metavar='dataset_path', type=str,
+        help='the path of the dataset to use',
+        default='400_customers/S-C1-400/C1_4_8.TXT')
+    parser.add_argument(
+        '-z', '--zoom', metavar='zoom', type=int,
+        help='the zooming factor for visualisation', default=3)
     return parser
+
 
 def main():
     """
@@ -115,10 +130,10 @@ def main():
     dict_info['color'] = visualisation.color_group(args.vehicle)
 
     toolbox = init_toolbox(
-            ind_size,
-            args.vehicle,
-            dict_info['data'],
-            dict_info['depot'])
+        ind_size,
+        args.vehicle,
+        dict_info['data'],
+        dict_info['depot'])
 
     # Create the global population
     # And an elite one
@@ -137,20 +152,21 @@ def main():
     root.geometry(str(width) + "x" + str(height))
 
     # The genetic algorithm in itself
-    algorithms.eaMuPlusLambda(pop,
-            toolbox,
-            _mu,
-            _lambda,
-            crossover_probability,
-            mutation_probability,
-            ngen,
-            stats=stats,
-            halloffame=hof)
+    algorithms.eaMuPlusLambda(
+        pop,
+        toolbox,
+        _mu,
+        _lambda,
+        crossover_probability,
+        mutation_probability,
+        ngen,
+        stats=stats,
+        halloffame=hof)
 
     dict_info['tour'] = visualisation.individual_as_appointment(
-            hof[0],
-            dict_info['data']['appointment']
-            )
+        hof[0],
+        dict_info['data']['appointment']
+        )
 
     # Create display of the problem and of the best solution
     visualisation.Example(root, dict_info)

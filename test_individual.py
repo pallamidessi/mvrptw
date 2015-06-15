@@ -19,11 +19,12 @@ for i in range(0, 12):
         LIST_ORDER[i].append(random.randrange(1, 6))
     LIST_ORDER[i].append(10-sum(LIST_ORDER[i]))
 
-LIST_APPOINTMENTS = model.generate_route(12,
-        10,
-        1000,
-        1000,
-        model.Point(500, 500))
+LIST_APPOINTMENTS = model.generate_route(
+    12,
+    10,
+    1000,
+    1000,
+    model.Point(500, 500))
 
 LIST_INDIVIDUALS = []
 # print("Dataset:\n")
@@ -39,14 +40,14 @@ for i in range(0, 12):
             offset += vehicleCount
 
     LIST_INDIVIDUALS.append(
-            genome.MvrpIndividual(
-                [list_routes,
-                    LIST_ORDER[i]]
-                )
+        genome.MvrpIndividual(
+            [list_routes,
+                LIST_ORDER[i]]
             )
+        )
     print str(LIST_INDIVIDUALS[i].decode(LIST_APPOINTMENTS)) + " " + \
-            str(LIST_INDIVIDUALS[i].is_time_constraint_respected(
-                LIST_APPOINTMENTS))
+        str(LIST_INDIVIDUALS[i].is_time_constraint_respected(
+            LIST_APPOINTMENTS))
     #print("Time respected: ")
     #print(LIST_INDIVIDUALS[i].is_time_constraint_respected(LIST_APPOINTMENTS))
     #print("Load respected: ")
