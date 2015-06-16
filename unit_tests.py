@@ -3,6 +3,7 @@
 File dedicated to unit testing.
 """
 import operators as op
+import model as mo
 import genome
 import unittest
 
@@ -44,13 +45,6 @@ class TestIndividual(unittest.TestCase):
             [[4, 7, 2], [8, 5, 6, 15, 8451], [14]],
             'Incorrect decoding')
 
-    #def test_crossover(self):
-    #    """
-    #    Checks if the crossover works fine
-    #    """
-    #    self.parent.encode(self.list_appointment)
-    #    #print op.crossover(self.parent, self.parent, self.dataset)
-
     def test_appointment_removal(self):
         """
         Checks if appointment removal works fine.
@@ -62,6 +56,12 @@ class TestIndividual(unittest.TestCase):
             [[1], [3, 5]],
             'Incorrect appointment removal')
 
+    def test_route_generation(self):
+        """
+        Checks if route generation works fine.
+        """
+        route = mo.generate_route(100, 12, 300, 300, mo.Point(20, 20))
+        self.assertEqual(len(route), 100*12, 'Incorrect route generation')
 
 if __name__ == "__main__":
     unittest.main()

@@ -161,8 +161,8 @@ def make_last_point(last_point, width, height, factor):
 
 def generate_route(nb_routes, k, height, width, starting):
     """
-    Generates n routes of k appointments on a grid of height * width with a
-    starting point named "starting".
+    Generates nb_routes routes of k appointments on a grid of height * width
+    with a starting point named "starting".
     """
     factor = 2000
     list_appointments = []
