@@ -218,6 +218,18 @@ def choosing_a_new_index(num_v, tested_values, length):
     return new_num_v
 
 
+def appointment_removal(parent, list_to_remove):
+    """
+    Removes the appointment in list_to_remove from parent.
+    """
+    for element in list_to_remove:
+        for index in range(0, len(parent)):
+            parent[index] = \
+                [item for item in parent[index]
+                    if item != element]
+    return parent
+
+
 def cx_rc(parent1, parent2, data):
     """
     Custom RC (or BCRC) crossover as describe in the article[1]
@@ -234,42 +246,16 @@ def cx_rc(parent1, parent2, data):
     if len(parent1.routes) != len(parent2.routes):
         return copy.deepcopy(parent1)
 
-    appointments_by_vehicle1 = []
-    appointments_by_vehicle2 = []
-
-    offset1 = 0
-    offset2 = 0
-
-    # Getting lists of lists containing all the appointments sorted by vehicle
-    for i in range(0, len(parent1.vehicles)):
-
-        new_offset1 = offset1 + parent1.vehicles[i].count()
-        new_offset2 = offset2 + parent2.vehicles[i].count()
-
-        appointments_by_vehicle1.append(
-            parent1.routes[offset1:new_offset1]
-        )
-
-        appointments_by_vehicle2.append(
-            parent2.routes[offset2:new_offset2]
-        )
-
-        offset1 = new_offset1
-        offset2 = new_offset2
-
-    # print("Before: ")
-    # print(appointments_by_vehicle1)
-    # print(appointments_by_vehicle2)
+    appointments_by_vehicle1 = parent1.split()
+    appointments_by_vehicle2 = parent2.split()
 
     # Picking and removing appointments associated to a vehicle in the second
     # parent from the first parent.
     tmp_select = random.randrange(0, len(parent1.vehicles))
 
-    for element in appointments_by_vehicle2[tmp_select]:
-        for index in range(0, len(parent1.vehicles)):
-            appointments_by_vehicle1[index] = \
-                [item for item in appointments_by_vehicle1[index]
-                    if item != element]
+    appointments_by_vehicle1 = appointment_removal(
+        appointments_by_vehicle1,
+        appointments_by_vehicle2[tmp_select])
 
     # Inserting back those elements in the list corresponding to the first
     # parent.
@@ -279,9 +265,6 @@ def cx_rc(parent1, parent2, data):
             element,
             data
         )
-
-    # print("After: ")
-    # print(appointments_by_vehicle1)
 
     # Making new vehicles containing the right number of appointments for the
     # offspring.
