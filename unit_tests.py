@@ -63,5 +63,22 @@ class TestIndividual(unittest.TestCase):
         route = mo.generate_route(100, 12, 300, 300, mo.Point(20, 20))
         self.assertEqual(len(route), 100*12, 'Incorrect route generation')
 
+    def test_new_index_choice(self):
+        """
+        Checks if choosing a new index works fine.
+        """
+        current_index = 1
+        length = 3
+        tested_values = [0, 1]
+        self.assertEqual(
+            op.choosing_a_new_index(
+                current_index,
+                tested_values,
+                length
+            ),
+            2
+        )
+        
+
 if __name__ == "__main__":
     unittest.main()

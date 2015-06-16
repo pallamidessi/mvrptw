@@ -45,3 +45,9 @@ def load_dataset(name):
     return {'appointment': list_appointment,
             'xrange': (minx, maxx),
             'yrange': (miny, maxy)}
+
+
+def load_protobuf(name):
+    """
+    Loads data using protobuf.
+    """

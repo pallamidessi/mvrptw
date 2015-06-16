@@ -37,18 +37,6 @@ def init(ind_class, size, nb_vehicle):
     first_part = range(0, size)
     random.shuffle(first_part)
 
-    #mroute = []
-    #offset = 0
-    #
-    #for vehicle_size in second_part:
-    #    route = []
-    #    for idx in range(offset, vehicle_size+offset):
-    #        route = insert_appointment1d(route, first_part[idx], data)
-    #    mroute.append(first_part[offset:offset+vehicle_size])
-    #    offset += vehicle_size
-
-    #first_part = list(itertools.chain(*mroute))
-
     # Create the individual and return it
     ind = ind_class((first_part, second_part))
     return ind
@@ -159,7 +147,7 @@ def insert_appointment2d(app_list, app, data):
     num_v = random.randrange(0, tmp)
 
     # Number of vehicles we tried to insert this element into
-    tested_values = 1
+    tested_values = [num_v]
 
     for idx in range(0, len(app_list[num_v])):
         # Sorting using data_element.window_start
@@ -180,7 +168,7 @@ def insert_appointment2d(app_list, app, data):
                 if num_v == new_num_v:
                     # print("DIE IN 2D!")
                     return app_list
-                tested_values += 1
+                tested_values.append(idx)
                 num_v = new_num_v
 
         if idx == (len(app_list[num_v])-1):
@@ -196,7 +184,7 @@ def insert_appointment2d(app_list, app, data):
                 if num_v == new_num_v:
                     # print("DIE IN 2D!")
                     return app_list
-                tested_values += 1
+                tested_values.append(idx)
                 num_v = new_num_v
 
     # print("DIE IN 2D!")
@@ -208,11 +196,10 @@ def choosing_a_new_index(num_v, tested_values, length):
     If there're still vehicles the function hasn't tried
     inserting our element into, the function gets a new id to
     give it a try.
-    If it's not the case, the function just returns the list
-    without inserting the element in it.
+    If it's not the case, the function just returns the current id.
     """
     new_num_v = num_v
-    while num_v == new_num_v and length > tested_values:
+    while new_num_v in tested_values and length > len(tested_values):
         new_num_v = random.randrange(0, length)
 
     return new_num_v
