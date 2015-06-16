@@ -7,6 +7,8 @@ import model as mo
 import genome
 import unittest
 
+class Appointment(object):
+    pass
 
 class TestIndividual(unittest.TestCase):
     """
@@ -78,6 +80,34 @@ class TestIndividual(unittest.TestCase):
             ),
             2
         )
+
+    def test_1d_insertion(self):
+        """
+        Checks if 1D insertion works fine.
+        """
+        data = []
+        offset = 0
+        for index in range(0, 6):
+            tmp = Appointment()
+            tmp.window_start = offset
+            tmp.window_end = offset+1000
+            offset = offset+1001
+            data.append(tmp)
+        
+        to_insert = Appointment()
+        to_insert.window_start = 2700
+        to_insert.window_end = 4000
+
+        dico = {}
+        dico['appointment'] = data
+
+        self.assertEqual(
+                op.insert_appointment1d(
+                    [1, 2, 4, 5],
+                    3,
+                    dico),
+                [1, 2, 3, 4, 5],
+                'Incorrect 1d insertion')
 
 
 if __name__ == "__main__":

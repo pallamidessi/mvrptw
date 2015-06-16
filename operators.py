@@ -110,7 +110,7 @@ def window_bounds_checking(app1, app2):
 
 def insert_appointment1d(app_list, app, data):
     """
-    Appointment inserting function. Insert an appointment in a 1d
+    Appointment inserting function. Inserts an appointment in a 1d
     appointment list.
     """
     list_appointment = data["appointment"]
@@ -137,7 +137,7 @@ def insert_appointment1d(app_list, app, data):
 
 def insert_appointment2d(app_list, app, data):
     """
-    Appointment inserting function. Insert an appointment in a 2D
+    Appointment inserting function. Inserts an appointment in a 2D
     appointment list.
     """
     tmp = len(app_list)
