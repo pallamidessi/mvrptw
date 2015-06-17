@@ -52,7 +52,7 @@ def load_dataset(name):
     #pylint: disable=E1101
 
     minx, miny = array.min(axis=0)[1], array.min(axis=0)[2]
-    maxx, maxy = array.min(axis=0)[1], array.min(axis=0)[2]
+    maxx, maxy = array.max(axis=0)[1], array.max(axis=0)[2]
 
     return {'appointment': list_appointment,
             'xrange': (minx, maxx),
