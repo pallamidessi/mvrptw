@@ -142,7 +142,7 @@ def draw_tour(list_coord, canvas, color):
     Draws the tour passed as a parameter on the canvas using the color also
     passed as a parameter.
     """
-    if len(list_coord) > 2:
+    if len(list_coord) >= 1:
         for i in range(0, len(list_coord) - 1):
             canvas.create_line(list_coord[i].get_x(),
                                list_coord[i].get_y(),

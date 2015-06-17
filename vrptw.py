@@ -104,7 +104,8 @@ def main():
 
     dict_info = {}
 
-    load_data.load_protobuf("protobuf_data/set1")
+    #load_data.load_protobuf("protobuf_data/set1")
+    
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
     width, height = 300, 300
@@ -129,6 +130,16 @@ def main():
     dict_info['data'] = load_data.load_dataset(args.path)
     # Set the routes color
     dict_info['color'] = visualisation.color_group(args.vehicle)
+
+    # Adjusting values based on the dataset size
+    tmp_len = len(dict_info['data']['appointment'])
+
+    ind_size = tmp_len 
+        
+    if args.vehicle > tmp_len:
+        args.vehicle = ind_size / 2 + 1
+
+    print tmp_len
 
     toolbox = init_toolbox(
         ind_size,
@@ -168,6 +179,8 @@ def main():
         hof[0],
         dict_info['data']['appointment']
         )
+
+    print hof[0]
 
     # Create display of the problem and of the best solution
     visualisation.Example(root, dict_info)

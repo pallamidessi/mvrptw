@@ -53,7 +53,7 @@ def evaluate(individual, data, depot, size):
     load = 0
     malus = {}
     malus['conflict'] = 1000
-    malus['missing_appointment'] = 10
+    malus['missing_appointment'] = 1000
     list_appointment = data["appointment"]
     # Split the first part of the individual as a list of route
     # using the second part
@@ -81,10 +81,14 @@ def evaluate(individual, data, depot, size):
             load -= capacity_per_vehicle
 
     # Set the different feasability malus
-    distance += (size - len(individual.vehicles)) * \
+    tmp = (size - sum([v.count() for v in individual.vehicles])) * \
         malus['missing_appointment']
+
+    distance += tmp
     distance += individual.is_time_constraint_respected(data) * \
         malus['conflict']
+
+    #load += tmp
 
     # Return a tuple of fitness: the cost and the load
     return distance, load

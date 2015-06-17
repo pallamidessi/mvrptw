@@ -30,20 +30,15 @@ def load_dataset(name):
     with open("data/" + name) as open_file:
         solomon_data = open_file.readlines()
 
-    array = []
-
-    for line in solomon_data[header_offset:]:
-        array.append([int(a) for a in line.strip().split()])
-    #pylint: disable=E1101
-    array = numpy.array(array)
-    #pylint: disable=E1101
-
-    minx, miny = array.min(axis=0)[1], array.min(axis=0)[2]
-    maxx, maxy = array.min(axis=0)[1], array.min(axis=0)[2]
+    tmp_list = []
 
     # Parse a line of the dataset
     for line in solomon_data[header_offset:]:
         parameters = [int(l) for l in line.strip().split()]
+        if parameters == []:
+            continue
+
+        tmp_list.append(parameters)
 
         # Create problem's object
         list_appointment.append(
@@ -51,6 +46,13 @@ def load_dataset(name):
                 model.Point(parameters[1], parameters[2]),
                 {'start': parameters[4], 'end': parameters[5]},
                 1))
+
+    #pylint: disable=E1101
+    array = numpy.array(tmp_list)
+    #pylint: disable=E1101
+
+    minx, miny = array.min(axis=0)[1], array.min(axis=0)[2]
+    maxx, maxy = array.min(axis=0)[1], array.min(axis=0)[2]
 
     return {'appointment': list_appointment,
             'xrange': (minx, maxx),
