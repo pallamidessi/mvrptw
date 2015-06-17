@@ -1,0 +1,6 @@
+enum TypeOfVehicle {
+   VSL = 0;
+   TPMR = 1;
+   Ambulance = 2;
+   Taxi = 3;
+}

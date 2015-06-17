@@ -1,0 +1,13 @@
+package Entities.AlgoGen;
+
+message IncreaseRange {
+   optional int32 MinKm = 1 [default = 0];
+   optional int32 MaxKm = 2 [default = 0];
+   optional float Price = 3 [default = 0];
+}
+message Pricing {
+   optional float KmPrice = 1 [default = 0];
+   repeated IncreaseRange IncreaseRanges = 2;
+   optional float TwoCustomersDecrease = 3 [default = 0];
+   optional float ThreeCustomersDecrease = 4 [default = 0];
+}

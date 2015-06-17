@@ -7,8 +7,40 @@ import model as mo
 import genome
 import unittest
 
+
 class Appointment(object):
-    pass
+    """
+    Represents an appointment object, for the sake of unit testing.
+    """
+
+    def __init__(self):
+        self.window_start = 0
+        self.window_end = 0
+
+    def get_window_start(self):
+        """
+        Returns _window_start
+        """
+        return self.window_start
+
+    def get_window_end(self):
+        """
+        Returns _window_end
+        """
+        return self.window_end
+
+    def set_window_start(self, value):
+        """
+        Sets _window_start
+        """
+        self.window_start = value
+
+    def set_window_end(self, value):
+        """
+        Sets _window_end
+        """
+        self.window_end = value
+
 
 class TestIndividual(unittest.TestCase):
     """
@@ -87,27 +119,27 @@ class TestIndividual(unittest.TestCase):
         """
         data = []
         offset = 0
-        for index in range(0, 6):
+        for _ in range(0, 6):
             tmp = Appointment()
-            tmp.window_start = offset
-            tmp.window_end = offset+1000
+            tmp.set_window_start(offset)
+            tmp.set_window_end(offset+1000)
             offset = offset+1001
             data.append(tmp)
-        
+
         to_insert = Appointment()
-        to_insert.window_start = 2700
-        to_insert.window_end = 4000
+        to_insert.set_window_start(2700)
+        to_insert.set_window_end(4000)
 
         dico = {}
         dico['appointment'] = data
 
         self.assertEqual(
-                op.insert_appointment1d(
-                    [1, 2, 4, 5],
-                    3,
-                    dico),
-                [1, 2, 3, 4, 5],
-                'Incorrect 1d insertion')
+            op.insert_appointment1d(
+                [1, 2, 4, 5],
+                3,
+                dico),
+            [1, 2, 3, 4, 5],
+            'Incorrect 1d insertion')
 
 
 if __name__ == "__main__":

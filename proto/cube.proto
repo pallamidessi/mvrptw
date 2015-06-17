@@ -1,0 +1,14 @@
+package Entities.AlgoGen;
+
+message CubeItem {
+   optional int32 Id = 1 [default = 0];
+   optional int32 DepartureAddress = 2 [default = 0];
+   optional int32 ArrivalAddress = 3 [default = 0];
+   optional int32 Duration = 4 [default = 0];
+   optional int32 Distance = 5 [default = 0];
+   optional int32 IdCubeTimeRange = 6 [default = 0];
+   optional int32 IdAddress = 7 [default = 0];
+}
+message List_CubeItem {
+   repeated CubeItem items = 1;
+}

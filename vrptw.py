@@ -104,6 +104,7 @@ def main():
 
     dict_info = {}
 
+    load_data.load_protobuf("protobuf_data/set1")
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
     width, height = 300, 300

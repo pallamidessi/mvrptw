@@ -1,0 +1,18 @@
+package Entities.AlgoGen;
+
+message List_Vehicle {
+   repeated Vehicle items = 1;
+}
+enum TypeOfVehicle {
+   VSL = 0;
+   TPMR = 1;
+   Ambulance = 2;
+   Taxi = 3;
+}
+message Vehicle {
+   optional int32 IdVehicle = 1 [default = 0];
+   optional TypeOfVehicle TypeOfVehicle = 2 [default = VSL];
+   optional float CostPerKm = 3 [default = 0];
+   optional float CostPerHour = 4 [default = 0];
+   optional int32 MaxOccupant = 5 [default = 0];
+}

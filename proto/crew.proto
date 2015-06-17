@@ -1,0 +1,25 @@
+package Entities.AlgoGen;
+import "bcl.proto"; // schema for protobuf-net's handling of core .NET types
+
+message Crew {
+   optional int32 IdCrew = 1 [default = 0];
+   repeated Employee Employees = 2;
+}
+message Employee {
+   optional int32 IdEmployee = 1 [default = 0];
+   repeated Crew Crews = 2;
+   optional int32 IdPauseAddress = 3 [default = 0];
+   optional bool IsGraduated = 4 [default = false];
+   optional bcl.NetObjectProxy WorkingHoursCost = 5; // reference-tracked PiecewiseLinearFunction
+   optional bcl.NetObjectProxy BeginingHoursCost = 6; // reference-tracked PiecewiseLinearFunction
+}
+message List_Crew {
+   repeated Crew items = 1;
+}
+message PiecewiseLinearFunction {
+   repeated PiecewiseValue PiecewiseValues = 1;
+}
+message PiecewiseValue {
+   optional int32 X = 1 [default = 0];
+   optional int32 Y = 2 [default = 0];
+}

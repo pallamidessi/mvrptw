@@ -1,0 +1,11 @@
+package Entities.AlgoGen;
+
+message Address {
+   optional int32 IdAddress = 1 [default = 0];
+   optional int32 IdAgglomeration = 2 [default = 0];
+   optional bool IsPickUpPlan = 3 [default = false];
+   optional int32 IdZone = 4 [default = 0];
+}
+message List_Address {
+   repeated Address items = 1;
+}

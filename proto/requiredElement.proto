@@ -1,0 +1,39 @@
+package Entities.AlgoGen;
+import "bcl.proto"; // schema for protobuf-net's handling of core .NET types
+
+message List_RequiredElement {
+   repeated RequiredElement items = 1;
+}
+message RequiredBusinessFleetElement {
+   optional int32 IdJourney = 1 [default = 0];
+}
+message RequiredElement {
+   optional int32 IdRequiredElement = 1 [default = 0];
+   optional int32 IdAddress = 2 [default = 0];
+   optional bcl.TimeSpan Duration = 3;
+   optional bcl.DateTime PlannedDate = 4;
+   optional bcl.DateTime ActualDate = 5;
+   optional TypeOfRequiredElement TypeOfRequiredElement = 6 [default = Departure];
+   // the following represent sub-types; at most 1 should have a value
+   optional RequiredEmployeeElement RequiredEmployeeElement = 10;
+   optional RequiredBusinessFleetElement RequiredBusinessFleetElement = 11;
+   optional RequiredInternFleetElement RequiredInternFleetElement = 12;
+   optional RequiredFleetElement RequiredFleetElement = 13;
+   optional RequiredVehicleElement RequiredVehicleElement = 14;
+}
+message RequiredEmployeeElement {
+}
+message RequiredFleetElement {
+}
+message RequiredInternFleetElement {
+   optional TypeOfRequiredInternFleetElement TypeOfRequiredInternFleetElement = 1 [default = One];
+}
+message RequiredVehicleElement {
+}
+enum TypeOfRequiredElement {
+   Departure = 0;
+   Arrival = 1;
+}
+enum TypeOfRequiredInternFleetElement {
+   One = 0;
+}

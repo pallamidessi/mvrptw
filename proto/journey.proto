@@ -1,0 +1,21 @@
+package Entities.AlgoGen;
+import "vehicleType.proto";
+
+message Journeypb {
+   optional int32 IdJourney = 1 [default = 0];
+   optional bool IsConccurentable = 2 [default = false];
+   optional int32 NumberOfOccupant = 3 [default = 0];
+   optional TypeOfVehicle RequiredTypeOfVehicle = 4 [default = VSL];
+   optional TypeOfJourney TypeOfJourney = 5 [default = Outward];
+   optional int32 IdCustomer = 6 [default = 0];
+   optional float BasePrice = 7 [default = 0];
+   repeated int32 IdPlannedElements = 8;
+}
+message List_Journey {
+   repeated Journeypb items = 1;
+}
+enum TypeOfJourney {
+   Outward = 0;
+   Return = 1;
+}
+
