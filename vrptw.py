@@ -108,7 +108,7 @@ def main():
     
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
-    width, height = 300, 300
+    width, height = 1300, 700
     ind_size = args.vehicle * args.node
     dict_info['zoom'] = args.zoom
 
@@ -134,12 +134,15 @@ def main():
     # Adjusting values based on the dataset size
     tmp_len = len(dict_info['data']['appointment'])
 
-    ind_size = tmp_len 
-        
+    ind_size = tmp_len
+
+    dict_info['zoomx'] = 1250 / max([
+        dict_info['data']['xrange'][1], dict_info['depot'].get_x()])
+    dict_info['zoomy'] = 702 / max([
+        dict_info['data']['yrange'][1], dict_info['depot'].get_y()])
+
     if args.vehicle > tmp_len:
         args.vehicle = ind_size / 2 + 1
-
-    print tmp_len
 
     toolbox = init_toolbox(
         ind_size,
@@ -179,8 +182,6 @@ def main():
         hof[0],
         dict_info['data']['appointment']
         )
-
-    print hof[0]
 
     # Create display of the problem and of the best solution
     visualisation.Example(root, dict_info)
