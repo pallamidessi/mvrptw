@@ -103,6 +103,19 @@ def load_protobuf(path_prefix):
         cube.ParseFromString(open_file.read())
         proto_dict['cube'] = cube
 
+    vehicle_list = [model.Vehicle(id_vehicle=v.IdVehicle,
+                                  count=0,
+                                  capacity=v.MaxOccupant,
+                                  vehicle_type=v.TypeOfVehicle,
+                                  cost_per_km=v.CostPerKm,
+                                  cost_per_hour=v.CostPerHour)
+        for v in proto_dict['vehicle'].items]
+
+    print vehicle_list
+
+    #for idx in range(0, len(proto_dict['vehicle'].items)):
+    #    print proto_dict['vehicle'].items[idx].CostPerKm
+
     return proto_dict
 
 #def load_vehicle(vehicle_param, vehicle_list):

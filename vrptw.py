@@ -104,8 +104,8 @@ def main():
 
     dict_info = {}
 
-    #load_data.load_protobuf("protobuf_data/set1")
-    
+    load_data.load_protobuf("protobuf_data/set1")
+
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
     width, height = 1300, 700
@@ -132,16 +132,14 @@ def main():
     dict_info['color'] = visualisation.color_group(args.vehicle)
 
     # Adjusting values based on the dataset size
-    tmp_len = len(dict_info['data']['appointment'])
-
-    ind_size = tmp_len
+    ind_size = len(dict_info['data']['appointment'])
 
     dict_info['zoomx'] = 1250 / max([
         dict_info['data']['xrange'][1], dict_info['depot'].get_x()])
     dict_info['zoomy'] = 702 / max([
         dict_info['data']['yrange'][1], dict_info['depot'].get_y()])
 
-    if args.vehicle > tmp_len:
+    if args.vehicle > ind_size:
         args.vehicle = ind_size / 2 + 1
 
     toolbox = init_toolbox(
@@ -177,6 +175,8 @@ def main():
         ngen,
         stats=stats,
         halloffame=hof)
+
+    print hof[0]
 
     dict_info['tour'] = visualisation.individual_as_appointment(
         hof[0],

@@ -54,7 +54,7 @@ def evaluate(individual, data, depot, size):
     malus = {}
     malus['conflict'] = 1000
     malus['missing_appointment'] = 1000
-    list_appointment = data["appointment"]
+
     # Split the first part of the individual as a list of route
     # using the second part
 
@@ -68,27 +68,26 @@ def evaluate(individual, data, depot, size):
         if len(route) > 0:
             distance += model.euclidian_distance(
                 depot,
-                list_appointment[route[0]])
+                data['appointment'][route[0]])
 
             for gene1, gene2 in zip(route[:-1], route[1:]):
                 distance += model.euclidian_distance(
-                    list_appointment[gene1],
-                    list_appointment[gene2])
+                    data['appointment'][gene1],
+                    data['appointment'][gene2])
 
             for gene1, gene2 in zip(route[:-1], route[1:]):
                 load += 1
 
             load -= capacity_per_vehicle
 
-    # Set the different feasability malus
-    tmp = (size - sum([v.count() for v in individual.vehicles])) * \
+    # Set the different feasability malus.
+    # Reusing "idx" so as not to have too many variables.
+    idx = (size - sum([v.count() for v in individual.vehicles])) * \
         malus['missing_appointment']
 
-    distance += tmp
+    distance += idx
     distance += individual.is_time_constraint_respected(data) * \
         malus['conflict']
-
-    #load += tmp
 
     # Return a tuple of fitness: the cost and the load
     return distance, load
@@ -153,7 +152,7 @@ def insert_appointment2d(app_list, app, data):
     tested_values = [num_v]
 
     idx = 0
-    while idx < len(app_list[num_v]):#for idx in range(0, len(app_list[num_v])):
+    while idx < len(app_list[num_v]):
         # Sorting using data_element.window_start
         if list_appointment[app_list[num_v][idx]].window_start > \
                 list_appointment[app].window_start:

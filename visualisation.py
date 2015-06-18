@@ -80,12 +80,17 @@ def color_distance(color1, color2):
     dist_h = color1[0] - color2[0]
     dist_s = color1[1] - color2[1]
     dist_v = color1[2] - color2[2]
-    
+
     return sqrt(dist_h * dist_h + dist_s * dist_s + dist_v * dist_v)
 
+
 def mutate_color(color):
+    """
+    Mutates one coordinate of a color in a HSV cube.
+    """
     color[random.randrange(0, 3)] = random.random() % 1
     return color
+
 
 def color_group(max_range):
     """
@@ -93,7 +98,7 @@ def color_group(max_range):
     """
 
     color = []
-    
+
     for _ in range(0, max_range):
         col = []
         col.append(random.random() % 1)
@@ -101,26 +106,33 @@ def color_group(max_range):
         col.append(random.random() % 1)
         color.append(col)
 
-    max_dist = 0
     dist_table = []
 
     for idx in range(0, max_range):
         dist_table.append([color_distance(color[idx], x) for x in color[:]])
 
     for _ in range(0, 50):
-        max_dist = 0
         for idx_start in range(0, max_range):
             global_point_distance = sum(dist_table[idx_start])
             tmp_dist_table = dist_table[idx_start][:]
             tmp_table = color[:]
             for idx_end in range(0, max_range):
                 tmp_table[idx_end] = mutate_color(color[idx_end])
-                tmp_dist_table[idx_end] = color_distance(color[idx_start], color[idx_end])
+                tmp_dist_table[idx_end] = color_distance(
+                    color[idx_start],
+                    color[idx_end])
             if sum(tmp_dist_table) > global_point_distance:
                 dist_table[idx_start] = tmp_dist_table[:]
                 color = tmp_table[:]
 
+    for index in range(0, len(color)):
+       color[index] = hls_to_rgb(
+            color[index][0],
+            color[index][1],
+            color[index][2])
+
     return color
+
 
 class Example(Frame):
     """
@@ -151,7 +163,7 @@ class Example(Frame):
         mtour = dict_info['tour']
         zoomx = dict_info['zoomx']
         zoomy = dict_info['zoomy']
- 
+
         list_appointment = data["appointment"]
         self.parent.title("Simple")
         self.pack(fill=BOTH, expand=1)
@@ -180,7 +192,7 @@ class Example(Frame):
                            width=7)
 
         for appointement in list_appointment:
-            
+
             currentx = appointement.get_x() * zoomx
             currenty = appointement.get_y() * zoomy
 
@@ -189,7 +201,7 @@ class Example(Frame):
                 currenty,
                 currentx - 3,
                 currenty - 3,
-                outline="red",#translate_to_tkcolor(color[appointement.group()]),
+                outline="red",
                 fill="red",
                 width=5)
 

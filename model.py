@@ -3,7 +3,7 @@ File containing the model classes for the project
 """
 
 import random
-
+from enum import Enum
 from noise import pnoise2
 # from cmath import polar, rect, pi as PI, e as E, phase
 from math import sqrt
@@ -47,6 +47,21 @@ class Point(complex):
     #    """
     #    conv = measure == "rad" and identity or rad_to_deg
     #    return (abs(self), conv(phase(self)))
+
+
+class RequiredElementTypes(Enum):
+    """
+    An enumeration of the possible types for a required element.
+    """
+    Departure = 0
+    Arrival = 1
+
+
+class RequiredInternFleetElementTypes(Enum):
+    """
+    An enumeration of the possible types for an intern fleet required element.
+    """
+    One = 0
 
 
 class Appointment(object):
@@ -103,6 +118,16 @@ class Appointment(object):
         self.load = 1
 
 
+class VehicleTypes(Enum):
+    """
+    This class enumerates the vehicle types.
+    """
+    VSL = 0
+    TPMR = 1
+    Ambulance = 2
+    Taxi = 3
+
+
 class Vehicle(object):
     """
     This class represents a Vehicle which has the following attributes:
@@ -113,15 +138,45 @@ class Vehicle(object):
     """
 
     def __repr__(self):
-        return "<Vehicle _id_vehicle: %s _count %s>\n" % (
+        return "<Vehicle _id_vehicle: %s, _count: %s, " % (
             self._id_vehicle,
-            self._count)
+            self._count) + \
+            "_capacity: %s, _vehicle_type: %s, " % (
+                self._capacity,
+                VehicleTypes(self._vehicle_type).name) + \
+            "_cost_per_km: %s, _cost_per_hour: %s>\n" % (
+                self._cost_per_km,
+                self._cost_per_hour)
 
     def id_vehicle(self):
         """
         Returns the identificator of the vehicle.
         """
         return self._id_vehicle
+
+    def vehicle_capacity(self):
+        """
+        Returns the vehicle's capacity.
+        """
+        return self._capacity
+
+    def vehicle_type(self):
+        """
+        Returns the vehicle's type.
+        """
+        return self._vehicle_type
+
+    def cost_per_km(self):
+        """
+        Returns the vehicle's cost per km.
+        """
+        return self._cost_per_km
+
+    def cost_per_hour(self):
+        """
+        Returns the vehicle's cost per hour.
+        """
+        return self._cost_per_hour
 
     def count(self):
         """
@@ -135,9 +190,20 @@ class Vehicle(object):
         """
         self._count += amount
 
-    def __init__(self, id_vehicle, count):
+    def __init__(self,
+                 id_vehicle,
+                 count,
+                 capacity=0,
+                 vehicle_type=VehicleTypes.VSL,
+                 cost_per_km=0,
+                 cost_per_hour=0):
+
         self._id_vehicle = id_vehicle
         self._count = count
+        self._capacity = capacity
+        self._vehicle_type = vehicle_type
+        self._cost_per_km = cost_per_km
+        self._cost_per_hour = cost_per_hour
 
 
 def make_last_point(last_point, width, height, factor):
