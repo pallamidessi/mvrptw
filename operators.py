@@ -135,7 +135,6 @@ def insert_appointment1d(app_list, app, data):
                 app_list.append(app)
                 return app_list
 
-    # print("DIE IN 1D!")
     return app_list
 
 
@@ -153,7 +152,8 @@ def insert_appointment2d(app_list, app, data):
     # Number of vehicles we tried to insert this element into
     tested_values = [num_v]
 
-    for idx in range(0, len(app_list[num_v])):
+    idx = 0
+    while idx < len(app_list[num_v]):#for idx in range(0, len(app_list[num_v])):
         # Sorting using data_element.window_start
         if list_appointment[app_list[num_v][idx]].window_start > \
                 list_appointment[app].window_start:
@@ -170,7 +170,6 @@ def insert_appointment2d(app_list, app, data):
                 new_num_v = choosing_a_new_index(num_v, tested_values, tmp)
 
                 if num_v == new_num_v:
-                    # print("DIE IN 2D!")
                     return app_list
                 tested_values.append(idx)
                 num_v = new_num_v
@@ -186,12 +185,13 @@ def insert_appointment2d(app_list, app, data):
                 new_num_v = choosing_a_new_index(num_v, tested_values, tmp)
 
                 if num_v == new_num_v:
-                    # print("DIE IN 2D!")
                     return app_list
                 tested_values.append(idx)
                 num_v = new_num_v
 
-    # print("DIE IN 2D!")
+        else:
+            idx += 1
+
     return app_list
 
 
@@ -296,6 +296,9 @@ def constrained_swap(ind, data):
         rand_route = random.randrange(0, len(splitted_route))
         if len(splitted_route[rand_route]) > 0:
             break
+        # Nothing to do here
+        if len(splitted_route) == 1:
+            return ind,
 
     # Choose a random appointement in the selected route
     rand_appointement = random.randrange(0, len(splitted_route[rand_route]))

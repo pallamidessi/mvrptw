@@ -45,7 +45,7 @@ def load_dataset(name):
             model.Appointment(
                 model.Point(parameters[1], parameters[2]),
                 {'start': parameters[4], 'end': parameters[5]},
-                1))
+                0))
 
     #pylint: disable=E1101
     array = numpy.array(tmp_list)
