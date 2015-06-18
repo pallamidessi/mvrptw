@@ -7,7 +7,7 @@ NUMBER     CAPACITY
 CUSTOMER
 CUST NO.  XCOORD.   YCOORD.    DEMAND   READY TIME  DUE DATE   SERVICE   TIME
  
-    0      40         50          0          0       1236          0   
+    0      40         50          0          0       1236          0
     1      45         68         10        912        967         90   
     2      45         70         30        825        870         90   
     3      42         66         10         65        146         90   
@@ -107,4 +107,5 @@ CUST NO.  XCOORD.   YCOORD.    DEMAND   READY TIME  DUE DATE   SERVICE   TIME
    97      60         85         30        561        622         90   
    98      58         75         20         30         84         90   
    99      55         80         10        743        820         90   
-  100      55         85         20        647        726         90   
+  100      55         85         20        647        726         90
+	101			 45					45				 20				 200	      250					90

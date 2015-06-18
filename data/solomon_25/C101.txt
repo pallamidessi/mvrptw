@@ -32,5 +32,4 @@ CUST NO.  XCOORD.   YCOORD.    DEMAND   READY TIME  DUE DATE   SERVICE   TIME
    22      28         52         20        812        883         90   
    23      28         55         10        732        777         90   
    24      25         50         10         65        144         90   
-   25      25         52         40        169        224         90   
-  
+   25      25         52         40        169        224         90     
