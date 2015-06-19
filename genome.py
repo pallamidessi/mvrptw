@@ -6,6 +6,7 @@ This file contains the description of the class individual.
 import itertools
 from operators import window_bounds_checking
 import model
+import copy
 
 
 class MvrpIndividual(object):
@@ -70,9 +71,8 @@ class MvrpIndividual(object):
         Simple operation to check whether the individual respects the load
         constraint.
         """
-        tmp = self.split()
-        for sublist in tmp:
-            if len(sublist) < 5:
+        for vehicle in self.vehicles():
+            if vehicle.count() > vehicle.capacity():
                 return False
         return True
 
@@ -91,13 +91,15 @@ class MvrpIndividual(object):
             index += 1
         return to_return
 
-    def encode(self, list_appointment):
+    def encode(self, list_appointment, parent):
         """
         Encodes the individual using a list of appointments
         """
         self.vehicles = []
         index = 0
         for sublist in list_appointment:
-            self.vehicles.append(model.Vehicle(index, len(sublist)))
+            self.vehicles.append(copy.deepcopy(parent.vehicles[index]))
+            self.vehicles[index].set_count(len(sublist))
             index += 1
+
         self.routes = list(itertools.chain.from_iterable(list_appointment))

@@ -154,7 +154,7 @@ class Vehicle(object):
         """
         return self._id_vehicle
 
-    def vehicle_capacity(self):
+    def capacity(self):
         """
         Returns the vehicle's capacity.
         """
@@ -183,6 +183,12 @@ class Vehicle(object):
         Returns the number of appointments the vehicle has to meet.
         """
         return self._count
+
+    def set_count(self, amount):
+        """
+        Sets _count to amount.
+        """
+        self._count = amount
 
     def add_to_count(self, amount):
         """

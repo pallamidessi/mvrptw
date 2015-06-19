@@ -12,7 +12,7 @@ class GetHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     This class implements a handler based on the BaseHTTPRequestHandler class.
     """
 
-    def __init__():
+    def __init__(self):
         self.vehicle_list = []
         self.crew_list = []
         self.journey_list = []
@@ -26,7 +26,7 @@ class GetHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         print self.command
         return
 
-    def create_vehicle():
+    def create_vehicle(self):
         """
         Creates a vehicle if the request path is /VehicleCreate
         """
@@ -73,5 +73,5 @@ server = SocketServer.TCPServer(('127.0.0.1', 8080), Handler)
 try:
     server.serve_forever()
 except KeyboardInterrupt:
-    print(' received, shutting down server')
+    print ' received, shutting down server'
     server.socket.close()

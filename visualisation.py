@@ -126,7 +126,7 @@ def color_group(max_range):
                 color = tmp_table[:]
 
     for index in range(0, len(color)):
-       color[index] = hls_to_rgb(
+        color[index] = hls_to_rgb(
             color[index][0],
             color[index][1],
             color[index][2])
