@@ -14,7 +14,7 @@ class MvrpIndividual(object):
     Genome definition. The genome is implemented a two-part chromosome
     described in the [insert link here] article[1].
 
-    routes : A list of integer, referencing appointement by their indexes
+    routes : A list of integer, referencing appointment by their indexes
 
     vehicles : A list of integer, where each values represent a vehicle and how
     many appointments it contained starting from the head of the list.
@@ -60,8 +60,9 @@ class MvrpIndividual(object):
         for sublist in tmp:
             if len(sublist) != 0:
                 current = sublist[0]
+                test = current.duration() > (current.window_end() - current.window_start())
                 for i in range(1, len(sublist)):
-                    if not window_bounds_checking(current, sublist[i]):
+                    if not window_bounds_checking(current, sublist[i]) or test:
                         result += 1
                     current = sublist[i]
         return result

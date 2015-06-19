@@ -120,7 +120,7 @@ def main():
     _lambda = args.size
 
     # Generate a the problem's data set
-    # i.e: Generate N "route" of appointement
+    # i.e: Generate N "route" of appointment
     #list_appointment = model.generate_route(num_route,
     #        num_node_per_route,
     #        width,

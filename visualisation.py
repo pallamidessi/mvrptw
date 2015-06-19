@@ -125,11 +125,11 @@ def color_group(max_range):
                 dist_table[idx_start] = tmp_dist_table[:]
                 color = tmp_table[:]
 
-    for index in range(0, len(color)):
-        color[index] = hls_to_rgb(
-            color[index][0],
-            color[index][1],
-            color[index][2])
+    #for index in range(0, len(color)):
+    #    color[index] = hls_to_rgb(
+    #        color[index][0],
+    #        color[index][1],
+    #        color[index][2])
 
     return color
 
@@ -191,10 +191,10 @@ class Example(Frame):
                            fill="green",
                            width=7)
 
-        for appointement in list_appointment:
+        for appointment in list_appointment:
 
-            currentx = appointement.get_x() * zoomx
-            currenty = appointement.get_y() * zoomy
+            currentx = appointment.get_x() * zoomx
+            currenty = appointment.get_y() * zoomy
 
             canvas.create_oval(
                 currentx,
@@ -232,7 +232,7 @@ def draw_tour(list_coord, canvas, color):
                            #dash=(4, 4))
 
 
-def indexes_to_appointement(indices, list_appointment):
+def indexes_to_appointment(indices, list_appointment):
     """
     Retrieves the appointments corresponding to the list of indices passed as a
     parameter in list_appointment
@@ -245,7 +245,7 @@ def indexes_to_appointement(indices, list_appointment):
     return translated
 
 
-def individual_as_appointment(ind, list_appointement):
+def individual_as_appointment(ind, list_appointment):
     """
     Transforms an individual into an appointment 2d list.
     """
@@ -253,9 +253,9 @@ def individual_as_appointment(ind, list_appointement):
     appointment_2d = []
 
     for route in splitted_route:
-        appointment_2d.append(indexes_to_appointement(
+        appointment_2d.append(indexes_to_appointment(
             route,
-            list_appointement))
+            list_appointment))
 
     return appointment_2d
 
@@ -282,9 +282,9 @@ def zoom_before_drawing(depot, list_appointment, zoomx, zoomy):
 
             zoomed_in_appointment = model.Appointment(
                 new_coordinate,
-                element.starting_time,
+                element.starting_time(),
                 element.group(),
-                {'start': element.window_start, 'end': element.window_end}
+                {'start': element.window_start(), 'end': element.window_end()}
             )
             list_to_return[index].append(zoomed_in_appointment)
 

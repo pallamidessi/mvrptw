@@ -111,6 +111,7 @@ def load_protobuf(path_prefix):
                                   cost_per_hour=v.CostPerHour)
                     for v in proto_dict['vehicle'].items]
 
+    # appointment_list = [model.Appointment(depot, 0, -1)
     to_return = {}
     to_return['vehicle'] = vehicle_list
     print vehicle_list

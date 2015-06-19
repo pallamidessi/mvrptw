@@ -21,7 +21,7 @@ class Point(complex):
     """
 
     def __repr__(self):
-        return "<Point x:%.3f y:%.3f>" % self.as_euclidian()
+        return "<Point x:%.3f y:%.3f>" % self.as_euclidean()
 
     def get_x(self):
         """
@@ -35,7 +35,7 @@ class Point(complex):
         """
         return self.imag
 
-    def as_euclidian(self):
+    def as_euclidean(self):
         """
         Returns the point as an euclidean tuple of coordinates.
         """
@@ -79,23 +79,23 @@ class Appointment(object):
         return "<Appointment coordinate:%s starting_time:%s w_start:%s \
             w_end:%s>\n" % \
             (
-                self.coordinate,
-                self.starting_time,
-                self.window_start,
-                self.window_end
+                self._coordinate,
+                self._starting_time,
+                self._window_start,
+                self._window_end
                 )
 
     def get_x(self):
         """
         Gets the x coordinate of the appointment.
         """
-        return self.coordinate.get_x()
+        return self._coordinate.get_x()
 
     def get_y(self):
         """
         Gets the y coordinate of the appointment.
         """
-        return self.coordinate.get_y()
+        return self._coordinate.get_y()
 
     def group(self):
         """
@@ -103,19 +103,50 @@ class Appointment(object):
         """
         return self._group
 
-    def __init__(self, coordinate, time, group, window=None):
-        self.coordinate = coordinate
-        self.starting_time = time
+    def starting_time(self):
+        """
+        Gets the starting time of the appointment/
+        """
+
+    def duration(self):
+        """
+        Gets the duration of the appointment.
+        """
+        return self._duration
+
+    def window_start(self):
+        """
+        Gets the start of the time window associated with the appointment.
+        """
+        return self._window_start
+
+    def window_end(self):
+        """
+        Gets the end of the time window associated with the appointment.
+        """
+        return self._window_end
+
+    def __init__(self,
+                 coordinate,
+                 time,
+                 group,
+                 window=None,
+                 duration=0,
+                 load=1):
+
+        self._duration = duration
+        self._coordinate = coordinate
+        self._starting_time = time
 
         if window is None:
-            self.window_start = 0
-            self.window_end = 0
+            self._window_start = 0
+            self._window_end = 0
         else:
-            self.window_start = window['start']
-            self.window_end = window['end']
+            self._window_start = window['start']
+            self._window_end = window['end']
 
         self._group = group
-        self.load = 1
+        self._load = load
 
 
 class VehicleTypes(Enum):
@@ -252,15 +283,15 @@ def generate_route(nb_routes, k, height, width, starting):
             starting.get_y() +
             random.randrange(-rand_window['h'], rand_window['h']))
 
-        appointement_time = 0
+        appointment_time = 0
         for _ in range(0, k):
             last_point = make_last_point(last_point, width, height, factor)
             window_start = random.randrange(0, 1000)
-            appointement_time += random.randrange(rand_time[0], rand_time[1])
+            appointment_time += random.randrange(rand_time[0], rand_time[1])
             list_appointments.append(
                 Appointment(
                     last_point,
-                    appointement_time,
+                    appointment_time,
                     i,
                     {
                         "start": window_start,
@@ -272,9 +303,9 @@ def generate_route(nb_routes, k, height, width, starting):
     return list_appointments
 
 
-def euclidian_distance(point1, point2):
+def euclidean_distance(point1, point2):
     """
-    Calculates the euclidian distance between point1 and point2.
+    Calculates the euclidean distance between point1 and point2.
     """
     return sqrt(
         (point1.get_x() - point2.get_x())**2 +
