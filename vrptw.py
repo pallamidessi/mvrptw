@@ -20,7 +20,7 @@ from deap import tools
 from deap import algorithms
 
 
-def init_toolbox(ind_size, num_route, data_dict, depot):
+def init_toolbox(ind_size, vehicle_list, data_dict, depot):
     """
     Initializes the toolbox used for the genetic algorithm.
     """
@@ -37,7 +37,7 @@ def init_toolbox(ind_size, num_route, data_dict, depot):
     # And describe the population initialisation
     toolbox.register(
         "individual", operators.init, creator.Individual,
-        size=ind_size, nb_vehicle=num_route)
+        size=ind_size, vehicles=vehicle_list)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     # Set the different genetic oprator inside the toolbox
@@ -104,7 +104,7 @@ def main():
 
     dict_info = {}
 
-    load_data.load_protobuf("protobuf_data/set1")
+    proto_dict = load_data.load_protobuf("protobuf_data/set1")
 
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
@@ -144,7 +144,7 @@ def main():
 
     toolbox = init_toolbox(
         ind_size,
-        args.vehicle,
+        proto_dict['vehicle'],
         dict_info['data'],
         dict_info['depot'])
 
