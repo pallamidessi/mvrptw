@@ -9,58 +9,97 @@ import copy
 #import itertools
 
 
-def init(ind_class, size, nb_vehicle):
+def init(ind_class, size, vehicles):
     """
     Initialisation operator.
     Fill the individual's first part with a random permutation of
-    appointment and compute the second part with a valid vehicle count.
+    appointments and computes the second part with a valid vehicle
+    count.
     """
-    remaining_size = size
-    second_part = []
+    second_part = vehicles
     first_part = []
 
+    distributed_appointments = 0
+
+    tmp_len = len(vehicles)
+    iteration_stop = 5 * tmp_len
+    nb_iterations = 0
+
+    while distributed_appointments < size and nb_iterations < iteration_stop:
+        nb_iterations += 1
+        index = random.randrange(0, tmp_len)
+        tmp_count = vehicles[index].count()
+        tmp_capacity = vehicles[index].capacity()
+        if tmp_count < tmp_capacity:
+            addition = random.randrange(1, tmp_capacity - tmp_count + 1)
+            vehicles[index].add_to_count(addition)
+            distributed_appointments += addition
+
+    if distributed_appointments < size:
+        for vehicle in vehicles:
+            if vehicle.capacity() > vehicle.count():
+                addition = min([vehicle.capacity() - vehicle.count(),
+                                size - distributed_appointments])
+                vehicle.add_to_count(addition)
+                distributed_appointments += addition
+                if distributed_appointments == size:
+                    break
+
     # Create the second part of the individual
-    # Choose random value while checking the upper bound
-    for i in range(0, nb_vehicle):
-        vehicle_capacity = random.randrange(1, (size / nb_vehicle) * 2)
-        vehicle_capacity %= remaining_size
-        remaining_size -= vehicle_capacity
-        second_part.append(model.Vehicle(i, vehicle_capacity))
-
-    # If there is still unassigned vehicles at the end
-    # Assigns them to the last vehicle
-    if remaining_size > 0:
-        second_part[-1].add_to_count(remaining_size)
-
-    # Create the first part of the chromosome
-    # Just a random permutation of indexes
+    # Chooses random values while checking the upper bound
     first_part = range(0, size)
     random.shuffle(first_part)
 
-    # Create the individual and return it
     ind = ind_class((first_part, second_part))
     return ind
+
+#def init(ind_class, size, nb_vehicle):
+#    """
+#    Initialisation operator.
+#    Fill the individual's first part with a random permutation of
+#    appointment and compute the second part with a valid vehicle count.
+#    """
+#    remaining_size = size
+#    second_part = []
+#    first_part = []
+#
+#    # Create the second part of the individual
+#    # Choose random value while checking the upper bound
+#    for i in range(0, nb_vehicle):
+#        vehicle_capacity = random.randrange(1, (size / nb_vehicle) * 2)
+#        vehicle_capacity %= remaining_size
+#        remaining_size -= vehicle_capacity
+#        second_part.append(model.Vehicle(i, vehicle_capacity))
+#
+#    # If there is still unassigned vehicles at the end
+#    # Assigns them to the last vehicle
+#    if remaining_size > 0:
+#        second_part[-1].add_to_count(remaining_size)
+#
+#    # Create the first part of the chromosome
+#    # Just a random permutation of indexes
+#    first_part = range(0, size)
+#    random.shuffle(first_part)
+#
+#    # Create the individual and return it
+#    ind = ind_class((first_part, second_part))
+#    return ind
 
 
 def evaluate(individual, data, depot, size):
     """
     Evaluate the genome.
     """
-    splitted_route = []
     idx = 0
-    capacity_per_vehicle = 5
     distance = 0
     load = 0
     malus = {}
     malus['conflict'] = 1000
     malus['missing_appointment'] = 1000
+    malus['non_respected_load'] = 2000
 
-    # Split the first part of the individual as a list of route
-    # using the second part
-
-    for vehicle in individual.vehicles:
-        splitted_route.append(individual.routes[idx:vehicle.count()])
-        idx += vehicle.count()
+    # Split the individual as a list of routes
+    splitted_route = individual.split()
 
     # For each vehicle (route)
     # Compute the distance travelled and the load
@@ -78,7 +117,14 @@ def evaluate(individual, data, depot, size):
             for gene1, gene2 in zip(route[:-1], route[1:]):
                 load += 1
 
-            load -= capacity_per_vehicle
+            current_vehicle = individual.vehicles[idx]
+
+            if current_vehicle.count() > current_vehicle.capacity():
+                load += malus['non_respected_load']
+                distance += malus['non_respected_load']
+
+            load -= current_vehicle.capacity()
+        idx += 1
 
     # Set the different feasability malus.
     # Reusing "idx" so as not to have too many variables.
@@ -259,7 +305,7 @@ def cx_rc(parent1, parent2, data):
     # Making new vehicles containing the right number of appointments for the
     # offspring.
 
-    child1.encode(appointments_by_vehicle1)
+    child1.encode(appointments_by_vehicle1, parent1)
 
     # Yay! Offspring!
     return child1
