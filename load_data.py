@@ -146,27 +146,28 @@ def load_protobuf(path_prefix):
                     for c in proto_dict['cube'].items]
     """
 
-    appointment_list = [model.Appointment(model.Point(
-                                            random.randrange(0, 1300),
-                                            random.randrange(0, 700)),
-                                          time=coef_from_scale(
-                                              re.PlannedDate.value,
-                                              re.PlannedDate.scale),
-                                          group=0,
-                                          duration=re.Duration,
-                                          #time_window_before=15,
-                                          #time_window_after=15,
-                                          app_type=re.TypeOfRequiredElement,
-                                          app_id=re.IdRequiredElement,
-                                          address=re.IdAddress
-                                          )
-                        for re in proto_dict['required_element'].items]
+    appointment_list = [model.Appointment(
+        model.Point(
+            random.randrange(0, 1300),
+            random.randrange(0, 700)),
+        time=coef_from_scale(
+            re.PlannedDate.value,
+            re.PlannedDate.scale),
+        group=0,
+        duration=re.Duration,
+        #time_window_before=15,
+        #time_window_after=15,
+        app_type=re.TypeOfRequiredElement,
+        app_id=re.IdRequiredElement,
+        address=re.IdAddress
+        )
+        for re in proto_dict['required_element'].items]
 
     journey_list = [model.Journey(id_journey=j.IdJourney,
                                   is_conccurentable=j.IsConccurentable,
                                   number_of_occupant=j.NumberOfOccupant,
-                                  required_type_of_vehicle=\
-                                    j.RequiredTypeOfVehicle,
+                                  required_type_of_vehicle=
+                                  j.RequiredTypeOfVehicle,
                                   type_of_journey=j.TypeOfJourney,
                                   id_customer=j.IdCustomer,
                                   base_price=j.BasePrice,
@@ -192,7 +193,6 @@ def load_protobuf(path_prefix):
 
     #for idx in range(0, len(proto_dict['vehicle'].items)):
     #    print proto_dict['vehicle'].items[idx].CostPerKm
-
 
     return to_return
 

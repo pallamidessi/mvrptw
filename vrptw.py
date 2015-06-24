@@ -94,6 +94,21 @@ def init_parser():
     return parser
 
 
+def make_data():
+    """
+    Loading data properly.
+    """
+    proto_dict = load_data.load_protobuf("protobuf_data/set1")
+    dict_info = {}
+    dict_info['data'] = {}
+    dict_info['data']['appointment'] = proto_dict['appointment']
+    dict_info['data']['xrange'] = proto_dict['xrange']
+    dict_info['data']['yrange'] = proto_dict['yrange']
+    dict_info['vehicle'] = proto_dict['vehicle']
+
+    return dict_info
+
+
 def main():
     """
     Main function of the project.
@@ -102,9 +117,7 @@ def main():
 
     random.seed(490)
 
-    dict_info = {}
-
-    proto_dict = load_data.load_protobuf("protobuf_data/set1")
+    dict_info = make_data()
 
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
@@ -127,7 +140,6 @@ def main():
     #        height,
     #        dict_info['depot'])
 
-    dict_info['data'] = load_data.load_dataset(args.path)
     # Set the routes color
     dict_info['color'] = visualisation.color_group(args.vehicle)
 
@@ -144,7 +156,7 @@ def main():
 
     toolbox = init_toolbox(
         ind_size,
-        proto_dict['vehicle'],
+        dict_info['vehicle'],
         dict_info['data'],
         dict_info['depot'])
 

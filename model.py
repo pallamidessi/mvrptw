@@ -55,12 +55,12 @@ class Address(object):
     """
     def __repr__(self):
         return '<Address id_address: %s, id_agglomeration: %s, ' % (
-                self._id_address,
-                self._id_agglomeration
-                ) + 'is_pick_up_plan: %s, id_zone: %s\n' % (
-                self._is_pick_up_plan,
-                self._id_zone
-                )
+            self._id_address,
+            self._id_agglomeration
+            ) + 'is_pick_up_plan: %s, id_zone: %s\n' % (
+            self._is_pick_up_plan,
+            self._id_zone
+            )
 
     def id_address(self):
         """
@@ -126,12 +126,12 @@ class Appointment(object):
 
     def __repr__(self):
         return "<Appointment coordinate:%s starting_time:%s w_start:%s " % (
-                self._coordinate,
-                self._starting_time,
-                self._window_start
-                ) + "w_end:%s>\n" % (
-                self._window_end
-                )
+            self._coordinate,
+            self._starting_time,
+            self._window_start
+            ) + "w_end:%s>\n" % (
+            self._window_end
+            )
 
     def get_x(self):
         """
@@ -480,4 +480,3 @@ class CubeItem(object):
         Returns the object's timerange.
         """
         return self._timerange
-
