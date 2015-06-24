@@ -49,6 +49,55 @@ class Point(complex):
     #    return (abs(self), conv(phase(self)))
 
 
+class Address(object):
+    """
+    This class represents an address as used in the GA.
+    """
+    def __repr__(self):
+        return '<Address id_address: %s, id_agglomeration: %s, ' % (
+                self._id_address,
+                self._id_agglomeration
+                ) + 'is_pick_up_plan: %s, id_zone: %s\n' % (
+                self._is_pick_up_plan,
+                self._id_zone
+                )
+
+    def id_address(self):
+        """
+        Returns the id of the address.
+        """
+        return self._id_address
+
+    def id_agglomeration(self):
+        """
+        Returns the id of the agglomeration to which the address belongs.
+        """
+        return self._id_agglomeration
+
+    def is_pick_up_plan(self):
+        """
+        Returns the information on whether someone can be picked up here
+        or not.
+        """
+        return self._is_pick_up_plan
+
+    def id_zone(self):
+        """
+        Returns the id of the zone to which the address belongs.
+        """
+        return self._id_zone
+
+    def __init__(self,
+                 id_address=0,
+                 id_agglomeration=0,
+                 is_pick_up_plan=False,
+                 id_zone=0):
+        self._id_address = id_address
+        self._id_agglomeration = id_agglomeration
+        self._is_pick_up_plan = is_pick_up_plan
+        self._id_zone = id_zone
+
+
 class RequiredElementTypes(Enum):
     """
     An enumeration of the possible types for a required element.
@@ -76,12 +125,11 @@ class Appointment(object):
     """
 
     def __repr__(self):
-        return "<Appointment coordinate:%s starting_time:%s w_start:%s \
-            w_end:%s>\n" % \
-            (
+        return "<Appointment coordinate:%s starting_time:%s w_start:%s " % (
                 self._coordinate,
                 self._starting_time,
-                self._window_start,
+                self._window_start
+                ) + "w_end:%s>\n" % (
                 self._window_end
                 )
 
@@ -105,14 +153,21 @@ class Appointment(object):
 
     def starting_time(self):
         """
-        Gets the starting time of the appointment/
+        Gets the starting time of the appointment.
         """
+        return self._starting_time
 
     def duration(self):
         """
         Gets the duration of the appointment.
         """
         return self._duration
+
+    def get_type(self):
+        """
+        Gets the type of the appointment.
+        """
+        return self._type
 
     def window_start(self):
         """
@@ -128,25 +183,43 @@ class Appointment(object):
 
     def __init__(self,
                  coordinate,
-                 time,
-                 group,
+                 time=0,
+                 group=0,
                  window=None,
+                 time_window_before=15,
+                 time_window_after=15,
                  duration=0,
-                 load=1):
+                 app_type=RequiredElementTypes.Departure,
+                 load=1,
+                 address=0,
+                 app_id=0
+                 ):
 
+        self._id = app_id
+        self._type = app_type
         self._duration = duration
         self._coordinate = coordinate
         self._starting_time = time
 
-        if window is None:
-            self._window_start = 0
-            self._window_end = 0
-        else:
-            self._window_start = window['start']
-            self._window_end = window['end']
+        self._window_start = time - time_window_before
+        self._window_end = time + time_window_after
+        #if window is None:
+        #    self._window_start = 0
+        #    self._window_end = 0
+        #else:
+        #    self._window_start = window['start']
+        #    self._window_end = window['end']
 
         self._group = group
         self._load = load
+
+
+class JourneyTypes(Enum):
+    """
+    This class enumerates the journey types.
+    """
+    Outward = 0
+    Return = 1
 
 
 class VehicleTypes(Enum):
@@ -157,6 +230,36 @@ class VehicleTypes(Enum):
     TPMR = 1
     Ambulance = 2
     Taxi = 3
+
+
+class Journey(object):
+    """
+    This class represents a journey. A journey consists of at most
+    three planned elements (appointments here). Those must obviously be
+    attained by the same vehicle in the right order since they define a
+    journey that has to be accomplished.
+    """
+
+    def __repr__(self):
+        return ""
+
+    def __init__(self,
+                 id_journey=0,
+                 is_conccurentable=False,
+                 number_of_occupant=0,
+                 required_type_of_vehicle=VehicleTypes.VSL,
+                 type_of_journey=JourneyTypes.Outward,
+                 id_customer=0,
+                 base_price=0,
+                 id_planned_elements=[0, 0]):
+        self._id_journey = id_journey
+        self._is_conccurentable = is_conccurentable
+        self._number_of_occupant = number_of_occupant
+        self._required_type_of_vehicle = required_type_of_vehicle
+        self._type_of_journey = type_of_journey
+        self._id_customer = id_customer
+        self._base_price = base_price
+        self._id_planned_elements = id_planned_elements
 
 
 class Vehicle(object):
@@ -310,3 +413,71 @@ def euclidean_distance(point1, point2):
     return sqrt(
         (point1.get_x() - point2.get_x())**2 +
         ((point1.get_y() - point2.get_y())**2))
+
+
+class CubeItem(object):
+    """
+    This class represents an element of the cube.
+    """
+
+    def __init__(self,
+                 cubeitem_id,
+                 departure,
+                 arrival,
+                 duration,
+                 distance,
+                 timerange
+                 ):
+        self._id = cubeitem_id
+        self._departure = departure
+        self._arrival = arrival
+        self._duration = duration
+        self._distance = distance
+        self._timerange = timerange
+
+    def __repr__(self):
+        return "<CubeItem: id %d, departure: %d, " % (
+            self._id,
+            self._departure) + \
+            "arrival: %d, duration: %d, distance: %d, timerange: %d>\n" % (
+                self._arrival,
+                self._duration,
+                self._distance,
+                self._timerange)
+
+    def cubeitem_id(self):
+        """
+        Returns the object's id.
+        """
+        return self._id
+
+    def departure(self):
+        """
+        Returns the object's departure's id.
+        """
+        return self._departure
+
+    def arrival(self):
+        """
+        Returns the object's arrival's id.
+        """
+        return self._arrival
+
+    def duration(self):
+        """
+        Returns the duration of the trip from departure toarrival.
+        """
+        return self._duration
+
+    def distance(self):
+        """
+        Returns the distance between departure and arrival.
+        """
+        return self._distance
+
+    def timerange(self):
+        """
+        Returns the object's timerange.
+        """
+        return self._timerange
+
