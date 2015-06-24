@@ -143,14 +143,14 @@ class Example(Frame):
         Frame.__init__(self, parent, background="white")
 
         self.parent = parent
-        new_dict = {}
-        new_dict['data'] = dict_info['data']
-        new_dict['color'] = dict_info['color']
-        new_dict['depot'] = dict_info['depot']
-        new_dict['tour'] = dict_info['tour']
-        new_dict['zoomx'] = dict_info['zoomx']
-        new_dict['zoomy'] = dict_info['zoomy']
-        self.init_ui(new_dict)
+        # new_dict = {}
+        # new_dict['data'] = dict_info['data']
+        # new_dict['color'] = dict_info['color']
+        # new_dict['depot'] = dict_info['depot']
+        # new_dict['tour'] = dict_info['tour']
+        # new_dict['zoomx'] = dict_info['zoomx']
+        # new_dict['zoomy'] = dict_info['zoomy']
+        self.init_ui(dict_info)
 
     def init_ui(self, dict_info):
         """
@@ -164,7 +164,8 @@ class Example(Frame):
         zoomx = dict_info['zoomx']
         zoomy = dict_info['zoomy']
 
-        list_appointment = data["appointment"]
+        list_appointment = data['appointment']
+
         self.parent.title("Simple")
         self.pack(fill=BOTH, expand=1)
 
@@ -192,7 +193,6 @@ class Example(Frame):
                            width=7)
 
         for appointment in list_appointment:
-
             currentx = appointment.get_x() * zoomx
             currenty = appointment.get_y() * zoomy
 
@@ -282,9 +282,11 @@ def zoom_before_drawing(depot, list_appointment, zoomx, zoomy):
 
             zoomed_in_appointment = model.Appointment(
                 new_coordinate,
-                element.starting_time(),
-                element.group(),
-                {'start': element.window_start(), 'end': element.window_end()}
+                time=0,
+                # element.starting_time(),
+                group=element.group()
+                # {'start': element.window_start(),
+                #  'end': element.window_end()}
             )
             list_to_return[index].append(zoomed_in_appointment)
 
