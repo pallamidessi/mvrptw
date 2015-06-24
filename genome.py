@@ -60,7 +60,8 @@ class MvrpIndividual(object):
         for sublist in tmp:
             if len(sublist) != 0:
                 current = sublist[0]
-                test = current.duration() > (current.window_end() - current.window_start())
+                test = current.duration() > \
+                    (current.window_end() - current.window_start())
                 for i in range(1, len(sublist)):
                     if not window_bounds_checking(current, sublist[i]) or test:
                         result += 1
@@ -72,10 +73,24 @@ class MvrpIndividual(object):
         Simple operation to check whether the individual respects the load
         constraint.
         """
-        for vehicle in self.vehicles():
+        for vehicle in self.vehicles:
             if vehicle.count() > vehicle.capacity():
                 return False
         return True
+
+    #def is_load_always_respected(self, data):
+    #    """
+    #    Simple operation to check whether the individual respects the load
+    #    constrait at each moment.
+    #    """
+    #    splitted_routes = self.split()
+    #    idx = 0
+    #    for vehicle in self.vehicles:
+    #        current_count = 0
+    #        for appointment in splitted_routes[idx]:
+    #            # Departure
+    #            if appointment._type == 0:
+
 
     def decode(self, data):
         """
