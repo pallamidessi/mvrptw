@@ -91,7 +91,6 @@ class MvrpIndividual(object):
     #            # Departure
     #            if appointment._type == 0:
 
-
     def decode(self, data):
         """
         Decodes the individual using a dictionary of data.
