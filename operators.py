@@ -105,12 +105,12 @@ def evaluate(individual, data, depot, size):
     # Compute the distance travelled and the load
     for route in splitted_route:
         if len(route) > 0:
-            distance += model.euclidian_distance(
+            distance += model.euclidean_distance(
                 depot,
                 data['appointment'][route[0]])
 
             for gene1, gene2 in zip(route[:-1], route[1:]):
-                distance += model.euclidian_distance(
+                distance += model.euclidean_distance(
                     data['appointment'][gene1],
                     data['appointment'][gene2])
 
@@ -149,10 +149,10 @@ def window_bounds_checking(app1, app2):
 
     # Checking whether app1 is before app2 (which is a constraint in this
     # case.
-    if app1.window_start > app2.window_start:
+    if app1.window_start() > app2.window_start():
         return False
 
-    if app1.window_end > app2.window_end:
+    if app1.window_end() > app2.window_end():
         return False
     return True
 
@@ -165,8 +165,8 @@ def insert_appointment1d(app_list, app, data):
     list_appointment = data["appointment"]
     # Vehicle number
     for idx in range(0, len(app_list)):
-        if list_appointment[app_list[idx]].window_start > \
-                list_appointment[app].window_start:
+        if list_appointment[app_list[idx]].window_start() > \
+                list_appointment[app].window_start():
             if window_bounds_checking(
                     list_appointment[app],
                     list_appointment[app_list[idx]]):
@@ -199,9 +199,9 @@ def insert_appointment2d(app_list, app, data):
 
     idx = 0
     while idx < len(app_list[num_v]):
-        # Sorting using data_element.window_start
-        if list_appointment[app_list[num_v][idx]].window_start > \
-                list_appointment[app].window_start:
+        # Sorting using data_element.window_start()
+        if list_appointment[app_list[num_v][idx]].window_start() > \
+                list_appointment[app].window_start():
             # Checking if the bounds are valid
             if window_bounds_checking(
                     list_appointment[app],
@@ -326,7 +326,7 @@ def constrained_swap(ind, data):
     A random swap following constraints.
     Need pretty heavy refactoring
     """
-    list_appointment = data["appointment"]
+    list_appointment = copy.deepcopy(data["appointment"])
     splitted_route = []
     idx = 0
 
@@ -345,10 +345,10 @@ def constrained_swap(ind, data):
         if len(splitted_route) == 1:
             return ind,
 
-    # Choose a random appointement in the selected route
-    rand_appointement = random.randrange(0, len(splitted_route[rand_route]))
+    # Choose a random appointment in the selected route
+    rand_appointment = random.randrange(0, len(splitted_route[rand_route]))
 
-    # Now we insert this appointement into a ramdomly selected route if
+    # Now we insert this appointment into a ramdomly selected route if
     # we can find a place where it respect constraints. If not, we do nothing
     shuffled_route = range(0, len(splitted_route))
     random.shuffle(shuffled_route)
@@ -356,25 +356,25 @@ def constrained_swap(ind, data):
     for i in shuffled_route:
         if i != rand_route:
             counter = 0
-            for appointement_idx in splitted_route[i]:
+            for appointment_idx in splitted_route[i]:
 
                 # If the next element in the list start after the one we want
                 # to insert, we place it here, and delete it from where we took
                 # it
-                if list_appointment[appointement_idx].starting_time > \
-                        list_appointment[rand_appointement]:
-                    splitted_route[i].insert(counter, rand_appointement)
-                    del splitted_route[rand_route][rand_appointement]
+                if list_appointment[appointment_idx].starting_time() > \
+                        list_appointment[rand_appointment]:
+                    splitted_route[i].insert(counter, rand_appointment)
+                    del splitted_route[rand_route][rand_appointment]
                     return ind,
 
-                # If the last appointement is starting before the one we want
+                # If the last appointment is starting before the one we want
                 # to insert, we insert it at the end of of the route,
                 # and delete it from where we took it
                 elif counter == len(splitted_route[i]) - 1:
-                    if list_appointment[appointement_idx].starting_time < \
-                            list_appointment[rand_appointement]:
-                        list_appointment.append(rand_appointement)
-                        del splitted_route[rand_route][rand_appointement]
+                    if list_appointment[appointment_idx].starting_time() < \
+                            list_appointment[rand_appointment]:
+                        list_appointment.append(rand_appointment)
+                        del splitted_route[rand_route][rand_appointment]
                         return ind,
 
     return ind,
