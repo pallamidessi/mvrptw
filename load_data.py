@@ -79,6 +79,7 @@ def coef_from_scale(value, scale):
         return value / 1000
     return value
 
+
 def load_cube(cube_list):
     """
     Creates a list of the elements contained in the cube using the class
@@ -101,9 +102,9 @@ def load_crews(crews):
     crew_list = [model.Crew(id_crew=c.IdCrew,
                             employees=[e.IdEmployee for e in c.Employees])
                  for c in crews]
-    
+
     return crew_list
-    
+
 
 def load_addresses(addresses):
     """
@@ -114,10 +115,10 @@ def load_addresses(addresses):
                                   is_pick_up_plan=addr.IsPickUpPlan,
                                   id_zone=addr.IdZone)
                     for addr in addresses]
-    
+
     return address_list
-    
-    
+
+
 def load_employees(crews):
     """
     Creates a list of employees using the class created in model.py.
@@ -136,13 +137,13 @@ def load_employees(crews):
             for item in sublist]]))
 
     return employee_list
-    
-    
+
+
 def load_journeys(journeys):
     """
     Creates a list of journeys using the class created in model.py.
     """
-    
+
     journey_list = [model.Journey(id_journey=j.IdJourney,
                                   is_conccurentable=j.IsConccurentable,
                                   number_of_occupant=j.NumberOfOccupant,
@@ -154,9 +155,9 @@ def load_journeys(journeys):
                                   id_planned_elements=j.IdPlannedElements
                                   )
                     for j in journeys]
-    
+
     return journey_list
-    
+
 
 def load_vehicles(vehicles):
     """
@@ -169,7 +170,7 @@ def load_vehicles(vehicles):
                                   cost_per_km=v.CostPerKm,
                                   cost_per_hour=v.CostPerHour)
                     for v in vehicles]
-                    
+
     return vehicle_list
 
 
@@ -193,7 +194,7 @@ def load_appointments(appointments):
         address=re.IdAddress
         )
         for re in appointments]
-    
+
     return appointment_list
 
 
@@ -253,11 +254,11 @@ def load_protobuf(path_prefix):
     to_return['address'] = load_addresses(proto_dict['address'].items)
 
     for key in to_return:
-	if key != 'crew' and key != 'employee':
-	    print to_return[key]
+        if key != 'crew' and key != 'employee':
+            print to_return[key]
         if key == 'employee':
             print [e.id_employee() for e in to_return[key]]
-	
+
     to_return['xrange'] = (min([appointment.get_x() for appointment
                                 in to_return['appointment']]),
                            max([appointment.get_x() for appointment

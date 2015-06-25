@@ -102,6 +102,8 @@ def make_data():
     dict_info = {}
     dict_info['data'] = {}
     dict_info['data']['appointment'] = proto_dict['appointment']
+    # dict_info['data']['appointment'] = load_data.load_dataset(
+    #     '400_customers/S-C1-400/C1_4_8.TXT')['appointment']
     dict_info['data']['xrange'] = proto_dict['xrange']
     dict_info['data']['yrange'] = proto_dict['yrange']
     dict_info['vehicle'] = proto_dict['vehicle']
