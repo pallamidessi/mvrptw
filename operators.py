@@ -4,9 +4,7 @@ This file contains operators to use in the genetic algorithm.
 """
 import random
 import model
-#import genome
 import copy
-#import itertools
 
 
 def init(ind_class, size, vehicles):
@@ -324,17 +322,18 @@ def crossover(parent1, parent2, data):
 def constrained_swap(ind, data):
     """
     A random swap following constraints.
-    Need pretty heavy refactoring
     """
-    list_appointment = copy.deepcopy(data["appointment"])
-    splitted_route = []
-    idx = 0
+    return constrained_journey_swap(ind, data)
+
+def constrained_journey_swap(ind, data):
+    """
+    A random journey swap following constraints.
+    """
+    list_appointment = data["appointment"]
 
     # Splits the first part of the individual as a list of routes
     # using the second part
-    for vehicle in ind.vehicles:
-        splitted_route.append(ind.routes[idx:vehicle.count()])
-        idx += vehicle.count()
+    splitted_route = ind.split()
 
     # Randomly choose a non-empty route
     while True:
@@ -348,33 +347,39 @@ def constrained_swap(ind, data):
     # Choose a random appointment in the selected route
     rand_appointment = random.randrange(0, len(splitted_route[rand_route]))
 
+    appointment_to_move = list_appointment[
+        splitted_route[rand_route][rand_appointment]]
+    journey = data['journey'][appointment_to_move.id_journey()]
+    
+    rand_appointment = []
+
+    # Fetching the elements corresponding to the affected journey
+    for index in range(0, len(splitted_route[rand_route])):
+
+        element = list_appointment[splitted_route[rand_route][index]]
+
+        if element.id_appointment() in journey.id_planned_elements() and \
+        appointment_to_move.id_journey() == element.id_journey():
+            rand_appointment.append(index)
+
     # Now we insert this appointment into a ramdomly selected route if
     # we can find a place where it respect constraints. If not, we do nothing
     shuffled_route = range(0, len(splitted_route))
     random.shuffle(shuffled_route)
 
     for i in shuffled_route:
-        if i != rand_route:
-            counter = 0
-            for appointment_idx in splitted_route[i]:
 
-                # If the next element in the list start after the one we want
-                # to insert, we place it here, and delete it from where we took
-                # it
-                if list_appointment[appointment_idx].starting_time() > \
-                        list_appointment[rand_appointment]:
-                    splitted_route[i].insert(counter, rand_appointment)
-                    del splitted_route[rand_route][rand_appointment]
-                    return ind,
+        tmp_route = splitted_route[i][:]
+        tmp_len = len(tmp_route)
 
-                # If the last appointment is starting before the one we want
-                # to insert, we insert it at the end of of the route,
-                # and delete it from where we took it
-                elif counter == len(splitted_route[i]) - 1:
-                    if list_appointment[appointment_idx].starting_time() < \
-                            list_appointment[rand_appointment]:
-                        list_appointment.append(rand_appointment)
-                        del splitted_route[rand_route][rand_appointment]
-                        return ind,
-
+        for app in rand_appointment:
+            insert_appointment1d(tmp_route,
+                                 splitted_route[rand_route][app],
+                                 data
+                                )
+        if len(tmp_route) == tmp_len + len(rand_appointment):
+            splitted_route[i] = tmp_route
+            ind.encode(splitted_route, ind)
+            return ind,
+        
     return ind,
