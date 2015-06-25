@@ -131,7 +131,7 @@ class Employee(object):
 
     def __eq__(self, other):
         return(isinstance(other, self.__class__) and
-               self._id_employee == other._id_employee)
+               self._id_employee == other.id_employee())
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -291,6 +291,12 @@ class Appointment(object):
         """
         return self._window_end
 
+    def id_journey(self):
+        """
+        Gets the id of the journey corresponding to the appointment.
+        """
+        return self._id_journey
+
     def id_appointment(self):
         """
         Returns the id of the appointment.
@@ -308,7 +314,8 @@ class Appointment(object):
                  app_type=RequiredElementTypes.Departure,
                  load=1,
                  address=0,
-                 app_id=0
+                 app_id=0,
+                 id_journey=0
                  ):
 
         self._id_appointment = app_id
@@ -316,6 +323,7 @@ class Appointment(object):
         self._duration = duration
         self._coordinate = coordinate
         self._starting_time = time
+        self._id_journey = id_journey
 
         self._window_start = time - time_window_before
         self._window_end = time + time_window_after
