@@ -113,6 +113,116 @@ class RequiredInternFleetElementTypes(Enum):
     One = 0
 
 
+class Employee(object):
+    """
+    This class represents an employee.
+    """
+
+    def __repr__(self):
+        return "<Employee id_employee: %s crews: %s id_pause_address: %s " % (
+            self._id_employee,
+            self._crews,
+            self._id_pause_address) + \
+            "is_graduated: %s working_hours_cost: %s " % (
+                self._is_graduated,
+                self._working_hours_cost) + \
+            "beginning_hours_cost: %s>\n" % (
+                self._beginning_hours_cost)
+
+    def __eq__(self, other):
+        return(isinstance(other, self.__class__) and
+               self._id_employee == other._id_employee)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self._id_employee)
+
+    def id_employee(self):
+        """
+        Returns the id of the employee.
+        """
+        return self._id_employee
+
+    def crews(self):
+        """
+        Returns the crews to which the employee belongs.
+        """
+        return self._crews
+
+    def id_pause_address(self):
+        """
+        Returns the id of the address where the employee will take his break.
+        """
+        return self._id_pause_address
+
+    def is_graduated(self):
+        """
+        Returns True if the employee is graduated, and False otherwise.
+        """
+        return self._is_graduated
+
+    def working_hours_cost(self):
+        """
+        Returns a function describing the cost of a working hour for the
+        employee depending on the time of the day.
+        """
+        return self._working_hours_cost
+
+    def beginning_hours_cost(self):
+        """
+        Returns a function describing the cost of starting work at a certain
+        time of the day for the employee.
+        """
+        return self._beginning_hours_cost
+
+    def __init__(self,
+                 id_employee=0,
+                 crews=[],
+                 id_pause_address=0,
+                 is_graduated=False,
+                 working_hours_cost=0,
+                 beginning_hours_cost=0
+                 ):
+        self._id_employee = id_employee
+        self._crews = crews
+        self._id_pause_address = id_pause_address
+        self._is_graduated = is_graduated
+        self._working_hours_cost = working_hours_cost
+        self._beginning_hours_cost = beginning_hours_cost
+
+
+class Crew(object):
+    """
+    This class represents a crew of employees.
+    """
+
+    def __repr__(self):
+        return "<Crew id_crew: %s employees: %s>\n" % (
+            self._id_crew,
+            self._employees)
+
+    def id_crew(self):
+        """
+        Returns the id of the crew.
+        """
+        return self._id_crew
+
+    def employees(self):
+        """
+        Returns the list of employees in the crew.
+        """
+        return self._employees
+
+    def __init__(self,
+                 id_crew=0,
+                 employees=[]
+                 ):
+        self._id_crew = id_crew
+        self._employees = employees
+
+
 class Appointment(object):
     """
     This class describes an appointments and contains the following
@@ -125,8 +235,8 @@ class Appointment(object):
     """
 
     def __repr__(self):
-        return "<Appointment coordinate:%s starting_time:%s w_start:%s " % (
-            self._coordinate,
+        return "<Appointment id:%s starting_time:%s w_start:%s " % (
+            self._id_appointment,
             self._starting_time,
             self._window_start
             ) + "w_end:%s>\n" % (
@@ -181,6 +291,12 @@ class Appointment(object):
         """
         return self._window_end
 
+    def id_appointment(self):
+        """
+        Returns the id of the appointment.
+        """
+        return self._id_appointment
+
     def __init__(self,
                  coordinate,
                  time=0,
@@ -195,7 +311,7 @@ class Appointment(object):
                  app_id=0
                  ):
 
-        self._id = app_id
+        self._id_appointment = app_id
         self._type = app_type
         self._duration = duration
         self._coordinate = coordinate
@@ -241,7 +357,57 @@ class Journey(object):
     """
 
     def __repr__(self):
-        return ""
+        return "<Journey id_journey: %s, id_planned_elements: %s>\n" % (
+            self._id_journey,
+            self._id_planned_elements)
+
+    def id_journey(self):
+        """
+        Returns the id of the journey.
+        """
+        return self._id_journey
+
+    def is_conccurentable(self):
+        """
+        Returns a boolean describing whether the journey is conccurentable.
+        """
+        return self._is_conccurentable
+
+    def number_of_occupant(self):
+        """
+        Returns the number of occupants in the vehicle during the journey.
+        """
+        return self._number_of_occupant
+
+    def required_type_of_vehicle(self):
+        """
+        Returns the required type of vehicle for the journey.
+        """
+        return self._required_type_of_vehicle
+
+    def type_of_journey(self):
+        """
+        Returns the type of the journey.
+        """
+        return self._type_of_journey
+
+    def id_customer(self):
+        """
+        Returns the id of the customer associated with the journey.
+        """
+        return self._id_customer
+
+    def base_price(self):
+        """
+        Returns the base price of the journey.
+        """
+        return self._base_price
+
+    def id_planned_elements(self):
+        """
+        Returns the list of planned elements for the journey.
+        """
+        return self._id_planned_elements
 
     def __init__(self,
                  id_journey=0,
