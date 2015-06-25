@@ -20,7 +20,7 @@ from deap import tools
 from deap import algorithms
 
 
-def init_toolbox(ind_size, vehicle_list, data_dict, depot):
+def init_toolbox(ind_size, data_dict, depot):
     """
     Initializes the toolbox used for the genetic algorithm.
     """
@@ -37,7 +37,7 @@ def init_toolbox(ind_size, vehicle_list, data_dict, depot):
     # And describe the population initialisation
     toolbox.register(
         "individual", operators.init, creator.Individual,
-        size=ind_size, vehicles=vehicle_list)
+        size=ind_size, vehicles=data_dict['vehicle'])
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     # Set the different genetic oprator inside the toolbox
@@ -106,7 +106,13 @@ def make_data():
     #     '400_customers/S-C1-400/C1_4_8.TXT')['appointment']
     dict_info['data']['xrange'] = proto_dict['xrange']
     dict_info['data']['yrange'] = proto_dict['yrange']
-    dict_info['vehicle'] = proto_dict['vehicle']
+
+    dict_info['data']['vehicle'] = proto_dict['vehicle']
+    dict_info['data']['employee'] = proto_dict['employee']
+    dict_info['data']['crew'] = proto_dict['crew']
+    dict_info['data']['journey'] = proto_dict['journey']
+    dict_info['data']['cube'] = proto_dict['cube']
+    dict_info['data']['address'] = proto_dict['address']
 
     return dict_info
 
@@ -158,7 +164,6 @@ def main():
 
     toolbox = init_toolbox(
         ind_size,
-        dict_info['vehicle'],
         dict_info['data'],
         dict_info['depot'])
 
