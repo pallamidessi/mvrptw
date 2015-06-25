@@ -79,6 +79,123 @@ def coef_from_scale(value, scale):
         return value / 1000
     return value
 
+def load_cube(cube_list):
+    """
+    Creates a list of the elements contained in the cube using the class
+    created in model.py.
+    """
+    cube = [model.CubeItem(c.Id,
+                           c.DepartureAddress,
+                           c.ArrivalAddress,
+                           c.Duration,
+                           c.Distance,
+                           c.IdCubeTimeRange)
+            for c in cube_list]
+    return cube
+
+
+def load_crews(crews):
+    """
+    Creates a list of crews using the class created in model.py.
+    """
+    crew_list = [model.Crew(id_crew=c.IdCrew,
+                            employees=[e.IdEmployee for e in c.Employees])
+                 for c in crews]
+    
+    return crew_list
+    
+
+def load_addresses(addresses):
+    """
+    Creates a list of addresses using the class created in model.py.
+    """
+    address_list = [model.Address(id_address=addr.IdAddress,
+                                  id_agglomeration=addr.IdAgglomeration,
+                                  is_pick_up_plan=addr.IsPickUpPlan,
+                                  id_zone=addr.IdZone)
+                    for addr in addresses]
+    
+    return address_list
+    
+    
+def load_employees(crews):
+    """
+    Creates a list of employees using the class created in model.py.
+    """
+    employee_list = list(set([model.Employee(
+        id_employee=e.IdEmployee,
+        crews=[item.IdCrew for item in e.Crews],
+        id_pause_address=e.IdPauseAddress,
+        is_graduated=e.IsGraduated,
+        working_hours_cost=e.WorkingHoursCost,
+        beginning_hours_cost=e.BeginingHoursCost
+        )
+        for e in [
+            item for sublist in [
+                c.Employees for c in crews]
+            for item in sublist]]))
+
+    return employee_list
+    
+    
+def load_journeys(journeys):
+    """
+    Creates a list of journeys using the class created in model.py.
+    """
+    
+    journey_list = [model.Journey(id_journey=j.IdJourney,
+                                  is_conccurentable=j.IsConccurentable,
+                                  number_of_occupant=j.NumberOfOccupant,
+                                  required_type_of_vehicle=
+                                  j.RequiredTypeOfVehicle,
+                                  type_of_journey=j.TypeOfJourney,
+                                  id_customer=j.IdCustomer,
+                                  base_price=j.BasePrice,
+                                  id_planned_elements=j.IdPlannedElements
+                                  )
+                    for j in journeys]
+    
+    return journey_list
+    
+
+def load_vehicles(vehicles):
+    """
+    Creates a list of vehicles using the class created in model.py.
+    """
+    vehicle_list = [model.Vehicle(id_vehicle=v.IdVehicle,
+                                  count=0,
+                                  capacity=v.MaxOccupant,
+                                  vehicle_type=v.TypeOfVehicle,
+                                  cost_per_km=v.CostPerKm,
+                                  cost_per_hour=v.CostPerHour)
+                    for v in vehicles]
+                    
+    return vehicle_list
+
+
+def load_appointments(appointments):
+    """
+    Creates a list of appointments using the class created in model.py.
+    """
+    appointment_list = [model.Appointment(
+        model.Point(
+            random.randrange(0, 1300),
+            random.randrange(0, 700)),
+        time=coef_from_scale(
+            re.PlannedDate.value,
+            re.PlannedDate.scale),
+        group=0,
+        duration=re.Duration,
+        #time_window_before=15,
+        #time_window_after=15,
+        app_type=re.TypeOfRequiredElement,
+        app_id=re.IdRequiredElement,
+        address=re.IdAddress
+        )
+        for re in appointments]
+    
+    return appointment_list
+
 
 def load_protobuf(path_prefix):
     """
@@ -102,9 +219,9 @@ def load_protobuf(path_prefix):
 
     # Loading Required Elements
     with open(path_prefix + "/ProtoRequiredElement.bin") as open_file:
-        required_element_list = requiredElement_pb2.List_RequiredElement()
-        required_element_list.ParseFromString(open_file.read())
-        proto_dict['required_element'] = required_element_list
+        appointment_list = requiredElement_pb2.List_RequiredElement()
+        appointment_list.ParseFromString(open_file.read())
+        proto_dict['required_element'] = appointment_list
 
     # Loading Vehicles
     with open(path_prefix + "/ProtoVehicle.bin") as open_file:
@@ -118,81 +235,37 @@ def load_protobuf(path_prefix):
         address_list.ParseFromString(open_file.read())
         proto_dict['address'] = address_list
 
-    """
     # Loading Cube
     with open(path_prefix + "/cube.bin") as open_file:
         cube = cube_pb2.List_CubeItem()
         cube.ParseFromString(open_file.read())
         proto_dict['cube'] = cube
-    """
-
-    vehicle_list = [model.Vehicle(id_vehicle=v.IdVehicle,
-                                  count=0,
-                                  capacity=v.MaxOccupant,
-                                  vehicle_type=v.TypeOfVehicle,
-                                  cost_per_km=v.CostPerKm,
-                                  cost_per_hour=v.CostPerHour)
-                    for v in proto_dict['vehicle'].items]
-
-    randx = random.randrange(0, 1300)
-    randy = random.randrange(0, 700)
-    """
-    cubeitem_list = [model.CubeItem(c.Id,
-                                    c.DepartureAddress,
-                                    c.ArrivalAddress,
-                                    c.Duration,
-                                    c.Distance,
-                                    c.IdCubeTimeRange)
-                    for c in proto_dict['cube'].items]
-    """
-
-    appointment_list = [model.Appointment(
-        model.Point(
-            random.randrange(0, 1300),
-            random.randrange(0, 700)),
-        time=coef_from_scale(
-            re.PlannedDate.value,
-            re.PlannedDate.scale),
-        group=0,
-        duration=re.Duration,
-        #time_window_before=15,
-        #time_window_after=15,
-        app_type=re.TypeOfRequiredElement,
-        app_id=re.IdRequiredElement,
-        address=re.IdAddress
-        )
-        for re in proto_dict['required_element'].items]
-
-    journey_list = [model.Journey(id_journey=j.IdJourney,
-                                  is_conccurentable=j.IsConccurentable,
-                                  number_of_occupant=j.NumberOfOccupant,
-                                  required_type_of_vehicle=
-                                  j.RequiredTypeOfVehicle,
-                                  type_of_journey=j.TypeOfJourney,
-                                  id_customer=j.IdCustomer,
-                                  base_price=j.BasePrice,
-                                  id_planned_elements=j.IdPlannedElements
-                                  )
-                    for j in proto_dict['journey'].items]
 
     to_return = {}
-    to_return['vehicle'] = vehicle_list
-    to_return['appointment'] = appointment_list[:50]
+    to_return['vehicle'] = load_vehicles(proto_dict['vehicle'].items)
+    to_return['appointment'] = load_appointments(
+        proto_dict['required_element'].items
+        )
+    to_return['cube'] = load_cube(proto_dict['cube'].items)
+    to_return['employee'] = load_employees(proto_dict['crew'].items)
+    to_return['crew'] = load_crews(proto_dict['crew'].items)
+    to_return['journey'] = load_journeys(proto_dict['journey'].items)
+    to_return['address'] = load_addresses(proto_dict['address'].items)
 
-    minx = min([appointment.get_x() for appointment in appointment_list])
-    miny = min([appointment.get_y() for appointment in appointment_list])
-
-    maxx = max([appointment.get_x() for appointment in appointment_list])
-    maxy = max([appointment.get_y() for appointment in appointment_list])
-
-    to_return['xrange'] = (minx, maxx)
-    to_return['yrange'] = (miny, maxy)
-
-    #print appointment_list
-    #print vehicle_list
-
-    #for idx in range(0, len(proto_dict['vehicle'].items)):
-    #    print proto_dict['vehicle'].items[idx].CostPerKm
+    for key in to_return:
+	if key != 'crew' and key != 'employee':
+	    print to_return[key]
+        if key == 'employee':
+            print [e.id_employee() for e in to_return[key]]
+	
+    to_return['xrange'] = (min([appointment.get_x() for appointment
+                                in to_return['appointment']]),
+                           max([appointment.get_x() for appointment
+                                in to_return['appointment']]))
+    to_return['yrange'] = (min([appointment.get_y() for appointment
+                                in to_return['appointment']]),
+                           max([appointment.get_y() for appointment
+                                in to_return['appointment']]))
 
     return to_return
 
