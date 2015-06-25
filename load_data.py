@@ -174,26 +174,52 @@ def load_vehicles(vehicles):
     return vehicle_list
 
 
-def load_appointments(appointments):
+def load_appointments(appointments, journeys):
     """
     Creates a list of appointments using the class created in model.py.
     """
-    appointment_list = [model.Appointment(
-        model.Point(
-            random.randrange(0, 1300),
-            random.randrange(0, 700)),
-        time=coef_from_scale(
-            re.PlannedDate.value,
-            re.PlannedDate.scale),
-        group=0,
-        duration=re.Duration,
-        #time_window_before=15,
-        #time_window_after=15,
-        app_type=re.TypeOfRequiredElement,
-        app_id=re.IdRequiredElement,
-        address=re.IdAddress
-        )
-        for re in appointments]
+    appointment_list = []
+    for index in range(0, len(journeys)):
+        journey = journeys[index]
+        for id_element in journey.id_planned_elements():
+            appointment_list.append([
+                model.Appointment(
+                    model.Point(
+                        random.randrange(0, 1300),
+                        random.randrange(0, 700)),
+                    time=coef_from_scale(
+                        re.PlannedDate.value,
+                        re.PlannedDate.scale),
+                    group=0,
+                    duration=re.Duration,
+                    #time_window_before=15,
+                    #time_window_after=15,
+                    app_type=re.TypeOfRequiredElement,
+                    app_id=re.IdRequiredElement,
+                    address=re.IdAddress,
+                    id_journey=index
+                    )
+                for re in appointments
+                if re.IdRequiredElement == id_element]
+            )
+
+    appointment_list = [it for sublist in appointment_list for it in sublist]
+    #appointment_list = [model.Appointment(
+    #    model.Point(
+    #        random.randrange(0, 1300),
+    #        random.randrange(0, 700)),
+    #    time=coef_from_scale(
+    #        re.PlannedDate.value,
+    #        re.PlannedDate.scale),
+    #    group=0,
+    #    duration=re.Duration,
+    #    #time_window_before=15,
+    #    #time_window_after=15,
+    #    app_type=re.TypeOfRequiredElement,
+    #    app_id=re.IdRequiredElement,
+    #    address=re.IdAddress
+    #    )
+    #    for re in appointments]
 
     return appointment_list
 
@@ -244,13 +270,14 @@ def load_protobuf(path_prefix):
 
     to_return = {}
     to_return['vehicle'] = load_vehicles(proto_dict['vehicle'].items)
+    to_return['journey'] = load_journeys(proto_dict['journey'].items)
     to_return['appointment'] = load_appointments(
-        proto_dict['required_element'].items
+        proto_dict['required_element'].items,
+        to_return['journey']
         )
     to_return['cube'] = load_cube(proto_dict['cube'].items)
     to_return['employee'] = load_employees(proto_dict['crew'].items)
     to_return['crew'] = load_crews(proto_dict['crew'].items)
-    to_return['journey'] = load_journeys(proto_dict['journey'].items)
     to_return['address'] = load_addresses(proto_dict['address'].items)
 
     for key in to_return:
