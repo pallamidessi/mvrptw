@@ -98,7 +98,7 @@ def make_data():
     """
     Loading data properly.
     """
-    proto_dict = load_data.load_protobuf("protobuf_data/set1")
+    proto_dict = load_data.load_protobuf("protobuf_data/set2")
     dict_info = {}
     dict_info['data'] = {}
     dict_info['data']['appointment'] = proto_dict['appointment']

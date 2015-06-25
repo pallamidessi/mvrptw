@@ -3,9 +3,10 @@
 """
 This file contains the description of the class individual.
 """
+
 import itertools
 from operators import window_bounds_checking
-import model
+# import model
 import copy
 
 
