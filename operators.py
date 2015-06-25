@@ -325,6 +325,7 @@ def constrained_swap(ind, data):
     """
     return constrained_journey_swap(ind, data)
 
+
 def constrained_journey_swap(ind, data):
     """
     A random journey swap following constraints.
@@ -352,7 +353,7 @@ def constrained_journey_swap(ind, data):
     appointment_to_move = list_appointment[
         splitted_route[rand_route][rand_appointment]]
     journey = data['journey'][appointment_to_move.id_journey()]
-    
+
     rand_appointment = []
 
     # Fetching the elements corresponding to the affected journey
@@ -361,7 +362,7 @@ def constrained_journey_swap(ind, data):
         element = list_appointment[splitted_route[rand_route][index]]
 
         if element.id_appointment() in journey.id_planned_elements() and \
-        appointment_to_move.id_journey() == element.id_journey():
+           appointment_to_move.id_journey() == element.id_journey():
             rand_appointment.append(index)
 
     # Now we insert this appointment into a ramdomly selected route if
@@ -378,9 +379,9 @@ def constrained_journey_swap(ind, data):
             insert_appointment1d(tmp_route,
                                  splitted_route[rand_route][app],
                                  data
-                                )
+                                 )
         if len(tmp_route) == tmp_len + len(rand_appointment):
-            
+
             splitted_route[i] = tmp_route[:]
 
             for app in sorted(rand_appointment, reverse=True):
@@ -390,5 +391,5 @@ def constrained_journey_swap(ind, data):
             print splitted_route
             ind.encode(splitted_route, ind)
             return ind,
-        
+
     return ind,
