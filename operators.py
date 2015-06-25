@@ -335,6 +335,8 @@ def constrained_journey_swap(ind, data):
     # using the second part
     splitted_route = ind.split()
 
+    print "Before: "
+    print splitted_route
     # Randomly choose a non-empty route
     while True:
         rand_route = random.randrange(0, len(splitted_route))
@@ -378,7 +380,14 @@ def constrained_journey_swap(ind, data):
                                  data
                                 )
         if len(tmp_route) == tmp_len + len(rand_appointment):
-            splitted_route[i] = tmp_route
+            
+            splitted_route[i] = tmp_route[:]
+
+            for app in sorted(rand_appointment, reverse=True):
+                del splitted_route[rand_route][app]
+
+            print "After:"
+            print splitted_route
             ind.encode(splitted_route, ind)
             return ind,
         
