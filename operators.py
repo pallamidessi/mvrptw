@@ -5,51 +5,88 @@ This file contains operators to use in the genetic algorithm.
 import random
 import model
 import copy
+import itertools
 
 
-def init(ind_class, size, vehicles):
+def init(ind_class, size, data):
     """
     Initialisation operator.
     Fill the individual's first part with a random permutation of
     appointments and computes the second part with a valid vehicle
-    count.
+    count. The first part will be consistent with the journeys.
     """
-    second_part = vehicles
+    vehicles = data['vehicle']
+    appointments = data['appointment']
+
+    second_part = copy.deepcopy(vehicles)
     first_part = []
 
-    distributed_appointments = 0
+    list_appointment = []
 
-    tmp_len = len(vehicles)
-    iteration_stop = 5 * tmp_len
-    nb_iterations = 0
+    for index in range(0, len(appointments)):
+        list_appointment.append(
+            [idx for idx in range(0, len(appointments))
+                if appointments[idx].id_journey() ==
+                appointments[index].id_journey()])
 
-    while distributed_appointments < size and nb_iterations < iteration_stop:
-        nb_iterations += 1
-        index = random.randrange(0, tmp_len)
-        tmp_count = vehicles[index].count()
-        tmp_capacity = vehicles[index].capacity()
-        if tmp_count < tmp_capacity:
-            addition = random.randrange(1, tmp_capacity - tmp_count + 1)
-            vehicles[index].add_to_count(addition)
-            distributed_appointments += addition
+    list_appointment = [elem for elem, _ in
+                        itertools.groupby(sorted(list_appointment))]
 
-    if distributed_appointments < size:
-        for vehicle in vehicles:
-            if vehicle.capacity() > vehicle.count():
-                addition = min([vehicle.capacity() - vehicle.count(),
-                                size - distributed_appointments])
-                vehicle.add_to_count(addition)
-                distributed_appointments += addition
-                if distributed_appointments == size:
-                    break
+    random.shuffle(list_appointment)
 
-    # Create the second part of the individual
-    # Chooses random values while checking the upper bound
-    first_part = range(0, size)
-    random.shuffle(first_part)
+    for journey in list_appointment:
+        rand_vehicle = random.randrange(0, len(vehicles))
+        for element in journey:
+            second_part[rand_vehicle].add_to_count(1)
 
-    ind = ind_class((first_part, second_part))
+    ind = ind_class((0, second_part))
+    ind.encode(list_appointment, ind)
+
     return ind
+
+#def init(ind_class, size, vehicles):
+#    """
+#    Initialisation operator.
+#    Fill the individual's first part with a random permutation of
+#    appointments and computes the second part with a valid vehicle
+#    count.
+#    """
+#    second_part = vehicles
+#    first_part = []
+#
+#    distributed_appointments = 0
+#
+#    tmp_len = len(vehicles)
+#    iteration_stop = 5 * tmp_len
+#    nb_iterations = 0
+#
+#    while distributed_appointments < size and nb_iterations < iteration_stop:
+#        nb_iterations += 1
+#        index = random.randrange(0, tmp_len)
+#        tmp_count = vehicles[index].count()
+#        tmp_capacity = vehicles[index].capacity()
+#        if tmp_count < tmp_capacity:
+#            addition = random.randrange(1, tmp_capacity - tmp_count + 1)
+#            vehicles[index].add_to_count(addition)
+#            distributed_appointments += addition
+#
+#    if distributed_appointments < size:
+#        for vehicle in vehicles:
+#            if vehicle.capacity() > vehicle.count():
+#                addition = min([vehicle.capacity() - vehicle.count(),
+#                                size - distributed_appointments])
+#                vehicle.add_to_count(addition)
+#                distributed_appointments += addition
+#                if distributed_appointments == size:
+#                    break
+#
+#    # Create the second part of the individual
+#    # Chooses random values while checking the upper bound
+#    first_part = range(0, size)
+#    random.shuffle(first_part)
+#
+#    ind = ind_class((first_part, second_part))
+#    return ind
 
 #def init(ind_class, size, nb_vehicle):
 #    """
@@ -155,11 +192,12 @@ def window_bounds_checking(app1, app2):
     return True
 
 
-def insert_appointment1d(app_list, app, data):
+def insert_appointment1d(app_list, app_to_insert, data):
     """
     Appointment inserting function. Inserts an appointment in a 1d
     appointment list.
     """
+    app = copy.deepcopy(app_to_insert)
     list_appointment = data["appointment"]
     # Vehicle number
     for idx in range(0, len(app_list)):
@@ -271,11 +309,6 @@ def cx_rc(parent1, parent2, data):
     [1]:
     """
 
-    child1 = copy.deepcopy(parent1)
-
-    child1.routes = []
-    child1.vehicles = []
-
     # Can't compute offspring in this case
     if len(parent1.routes) != len(parent2.routes):
         return copy.deepcopy(parent1)
@@ -285,7 +318,8 @@ def cx_rc(parent1, parent2, data):
 
     # Picking and removing appointments associated to a vehicle in the second
     # parent from the first parent.
-    tmp_select = random.randrange(0, len(parent1.vehicles))
+
+    tmp_select = random.randrange(0, len(parent2.vehicles))
 
     appointments_by_vehicle1 = appointment_removal(
         appointments_by_vehicle1,
@@ -303,7 +337,8 @@ def cx_rc(parent1, parent2, data):
     # Making new vehicles containing the right number of appointments for the
     # offspring.
 
-    child1.encode(appointments_by_vehicle1, parent1)
+    child1 = copy.deepcopy(parent1)
+    child1.encode(appointments_by_vehicle1, child1)
 
     # Yay! Offspring!
     return child1
@@ -336,9 +371,10 @@ def constrained_journey_swap(ind, data):
     # using the second part
     splitted_route = ind.split()
 
-    print "Before: "
-    print splitted_route
     # Randomly choose a non-empty route
+    if len(splitted_route) == 0:
+        return ind,
+
     while True:
         rand_route = random.randrange(0, len(splitted_route))
         if len(splitted_route[rand_route]) > 0:
@@ -380,15 +416,13 @@ def constrained_journey_swap(ind, data):
                                  splitted_route[rand_route][app],
                                  data
                                  )
-        if len(tmp_route) == tmp_len + len(rand_appointment):
+        if len(tmp_route) == (tmp_len + len(rand_appointment)):
 
             splitted_route[i] = tmp_route[:]
 
             for app in sorted(rand_appointment, reverse=True):
                 del splitted_route[rand_route][app]
 
-            print "After:"
-            print splitted_route
             ind.encode(splitted_route, ind)
             return ind,
 

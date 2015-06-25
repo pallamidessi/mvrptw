@@ -280,11 +280,11 @@ def load_protobuf(path_prefix):
     to_return['crew'] = load_crews(proto_dict['crew'].items)
     to_return['address'] = load_addresses(proto_dict['address'].items)
 
-    for key in to_return:
-        if key != 'crew' and key != 'employee':
-            print to_return[key]
-        if key == 'employee':
-            print [e.id_employee() for e in to_return[key]]
+    #for key in to_return:
+    #    if key != 'crew' and key != 'employee':
+    #        #print to_return[key]
+    #    if key == 'employee':
+    #        #print [e.id_employee() for e in to_return[key]]
 
     to_return['xrange'] = (min([appointment.get_x() for appointment
                                 in to_return['appointment']]),

@@ -37,7 +37,7 @@ def init_toolbox(ind_size, data_dict, depot):
     # And describe the population initialisation
     toolbox.register(
         "individual", operators.init, creator.Individual,
-        size=ind_size, vehicles=data_dict['vehicle'])
+        size=ind_size, data=data_dict)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     # Set the different genetic oprator inside the toolbox
