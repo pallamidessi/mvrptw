@@ -311,7 +311,7 @@ class Appointment(object):
                  time_window_before=15,
                  time_window_after=15,
                  duration=0,
-                 app_type=RequiredElementTypes.Departure,
+                 app_type=RequiredElementTypes.Departure.value,
                  load=1,
                  address=0,
                  app_id=0,

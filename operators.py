@@ -19,7 +19,6 @@ def init(ind_class, size, data):
     appointments = data['appointment']
 
     second_part = copy.deepcopy(vehicles)
-    first_part = []
 
     list_appointment = []
 
@@ -36,11 +35,11 @@ def init(ind_class, size, data):
 
     for journey in list_appointment:
         rand_vehicle = random.randrange(0, len(vehicles))
-        for element in journey:
+        for _ in journey:
             second_part[rand_vehicle].add_to_count(1)
 
     ind = ind_class((0, second_part))
-    ind.encode(list_appointment, ind)
+    ind.encode_from_vehicle(list_appointment, ind)
 
     return ind
 
@@ -125,7 +124,6 @@ def evaluate(individual, data, depot, size):
     """
     Evaluate the genome.
     """
-    idx = 0
     distance = 0
     load = 0
     malus = {}
@@ -149,24 +147,24 @@ def evaluate(individual, data, depot, size):
                     data['appointment'][gene1],
                     data['appointment'][gene2])
 
-            for gene1, gene2 in zip(route[:-1], route[1:]):
-                load += 1
+            # for gene1, gene2 in zip(route[:-1], route[1:]):
+            #    load += 1
+            #
+            # current_vehicle = individual.vehicles[idx]
+            #
+            # if current_vehicle.count() > current_vehicle.capacity():
+            #    load += malus['non_respected_load']
+            #    distance += malus['non_respected_load']
+            #
+            # load -= current_vehicle.capacity()
 
-            current_vehicle = individual.vehicles[idx]
+    # Set malus
+    load += individual.is_load_respected(data) * malus['non_respected_load']
 
-            if current_vehicle.count() > current_vehicle.capacity():
-                load += malus['non_respected_load']
-                distance += malus['non_respected_load']
-
-            load -= current_vehicle.capacity()
-        idx += 1
-
-    # Set the different feasability malus.
-    # Reusing "idx" so as not to have too many variables.
-    idx = (size - sum([v.count() for v in individual.vehicles])) * \
+    penalty = (size - sum([v.count() for v in individual.vehicles])) * \
         malus['missing_appointment']
 
-    distance += idx
+    distance += penalty
     distance += individual.is_time_constraint_respected(data) * \
         malus['conflict']
 
@@ -230,7 +228,7 @@ def insert_appointment2d(app_list, app, data):
     # Vehicle index
     num_v = random.randrange(0, tmp)
 
-    # Number of vehicles we tried to insert this element into
+    # Vehicles we tried to insert this element into
     tested_values = [num_v]
 
     idx = 0
@@ -252,7 +250,7 @@ def insert_appointment2d(app_list, app, data):
 
                 if num_v == new_num_v:
                     return app_list
-                tested_values.append(idx)
+                tested_values.append(new_num_v)
                 num_v = new_num_v
 
         if idx == (len(app_list[num_v])-1):
@@ -302,6 +300,66 @@ def appointment_removal(parent, list_to_remove):
     return parent
 
 
+def insert_journey2d(app_list, journey, data):
+    """
+    Journey inserting function. Inserts a journey in a 2D appointment list.
+    """
+    tmp = len(app_list)
+    journey_len = len(journey)
+
+    # Vehicle index
+    num_v = random.randrange(0, tmp)
+
+    # Vehicles we tried to insert this element into
+    tested_values = [num_v]
+
+    while True:
+
+        tmp_list = app_list[num_v][:]
+
+        for app in journey:
+            insert_appointment1d(tmp_list,
+                                 app,
+                                 data
+                                 )
+
+        if len(tmp_list) == len(app_list[num_v]) + journey_len:
+            app_list[num_v] = tmp_list
+            return app_list
+
+        new_num_v = choosing_a_new_index(num_v, tested_values, tmp)
+        if new_num_v == num_v:
+            return app_list
+
+        tested_values.append(new_num_v)
+        num_v = new_num_v
+
+    return app_list
+
+
+def get_journey_from_appointment(app_list, app, data):
+    """
+    Returns a list of appointments associated to an appointment in
+    appointment list.
+    """
+
+    list_appointment = data['appointment']
+
+    appointment_to_move = list_appointment[app]
+
+    journey = data['journey'][appointment_to_move.id_journey()]
+    to_return = []
+
+    # Fetching the elements corresponding to the affected journey
+    for index in range(0, len(app_list)):
+        element = list_appointment[app_list[index]]
+        if element.id_appointment() in journey.id_planned_elements() and \
+           appointment_to_move.id_journey() == element.id_journey():
+            to_return.append(app_list[index])
+
+    return to_return
+
+
 def cx_rc(parent1, parent2, data):
     """
     Custom RC (or BCRC) crossover as describe in the article[1]
@@ -318,21 +376,50 @@ def cx_rc(parent1, parent2, data):
 
     # Picking and removing appointments associated to a vehicle in the second
     # parent from the first parent.
+    length = len(parent2.vehicles)
+    tmp_select = random.randrange(0, length)
+    tested_values = [tmp_select]
 
-    tmp_select = random.randrange(0, len(parent2.vehicles))
+    while len(appointments_by_vehicle2[tmp_select]) == 0:
+        new_index = choosing_a_new_index(tmp_select, tested_values, length)
+        if new_index == tmp_select:
+            break
+        tested_values.append(new_index)
+        tmp_select = new_index
 
     appointments_by_vehicle1 = appointment_removal(
         appointments_by_vehicle1,
         appointments_by_vehicle2[tmp_select])
 
+    # Creating a list of the journeys to keep the data consistent while
+    # inserting it in the first individual.
+    journeys_to_insert = []
+
+    for element in appointments_by_vehicle2[tmp_select]:
+        if data['appointment'][element].get_type() == \
+           model.RequiredElementTypes.Departure.value:
+
+            journeys_to_insert.append(sorted(get_journey_from_appointment(
+                appointments_by_vehicle2[tmp_select],
+                element,
+                data
+            )))
+
     # Inserting back those elements in the list corresponding to the first
     # parent.
-    for element in appointments_by_vehicle2[tmp_select]:
-        appointments_by_vehicle1 = insert_appointment2d(
+    for element in journeys_to_insert:
+        appointments_by_vehicle1 = insert_journey2d(
             appointments_by_vehicle1,
             element,
             data
         )
+
+    #for element in appointments_by_vehicle2[tmp_select]:
+    #    appointments_by_vehicle1 = insert_appointment2d(
+    #        appointments_by_vehicle1,
+    #        element,
+    #        data
+    #    )
 
     # Making new vehicles containing the right number of appointments for the
     # offspring.
@@ -365,7 +452,6 @@ def constrained_journey_swap(ind, data):
     """
     A random journey swap following constraints.
     """
-    list_appointment = data["appointment"]
 
     # Splits the first part of the individual as a list of routes
     # using the second part
@@ -386,44 +472,22 @@ def constrained_journey_swap(ind, data):
     # Choose a random appointment in the selected route
     rand_appointment = random.randrange(0, len(splitted_route[rand_route]))
 
-    appointment_to_move = list_appointment[
-        splitted_route[rand_route][rand_appointment]]
-    journey = data['journey'][appointment_to_move.id_journey()]
+    # Fetching the appointments corresponding to the chosen journey
+    journey_list = []
+    journey_list = get_journey_from_appointment(
+        splitted_route[rand_route],
+        splitted_route[rand_route][rand_appointment],
+        data)
 
-    rand_appointment = []
-
-    # Fetching the elements corresponding to the affected journey
-    for index in range(0, len(splitted_route[rand_route])):
-
-        element = list_appointment[splitted_route[rand_route][index]]
-
-        if element.id_appointment() in journey.id_planned_elements() and \
-           appointment_to_move.id_journey() == element.id_journey():
-            rand_appointment.append(index)
+    splitted_route[rand_route] = [elem for elem in splitted_route[rand_route]
+                                  if elem not in journey_list]
 
     # Now we insert this appointment into a ramdomly selected route if
     # we can find a place where it respect constraints. If not, we do nothing
-    shuffled_route = range(0, len(splitted_route))
-    random.shuffle(shuffled_route)
-
-    for i in shuffled_route:
-
-        tmp_route = splitted_route[i][:]
-        tmp_len = len(tmp_route)
-
-        for app in rand_appointment:
-            insert_appointment1d(tmp_route,
-                                 splitted_route[rand_route][app],
-                                 data
-                                 )
-        if len(tmp_route) == (tmp_len + len(rand_appointment)):
-
-            splitted_route[i] = tmp_route[:]
-
-            for app in sorted(rand_appointment, reverse=True):
-                del splitted_route[rand_route][app]
-
-            ind.encode(splitted_route, ind)
-            return ind,
+    splitted_route = insert_journey2d(
+        splitted_route,
+        journey_list,
+        data
+    )
 
     return ind,

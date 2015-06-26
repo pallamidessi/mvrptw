@@ -6,7 +6,7 @@ This file contains the description of the class individual.
 
 import itertools
 from operators import window_bounds_checking
-# import model
+import model
 import copy
 
 
@@ -33,6 +33,7 @@ class MvrpIndividual(object):
     def __init__(self, attributes):
         self.routes = attributes[0]
         self.vehicles = attributes[1]
+        self.loads = []
 
     def __repr__(self):
         return ("<Individual routes %s vehicle %s> \n" %
@@ -69,28 +70,41 @@ class MvrpIndividual(object):
                     current = sublist[i]
         return result
 
-    def is_load_respected(self):
+    def is_load_respected(self, data):
         """
         Simple operation to check whether the individual respects the load
         constraint.
         """
-        for vehicle in self.vehicles:
-            if vehicle.count() > vehicle.capacity():
-                return False
-        return True
+        self.compute_loads(data)
+        violated = 0
+        for idx in range(0, len(self.loads)):
+            for elem in self.loads[idx]:
+                if elem > self.vehicles[idx].capacity():
+                    violated += 1
+        return violated
 
-    #def is_load_always_respected(self, data):
-    #    """
-    #    Simple operation to check whether the individual respects the load
-    #    constrait at each moment.
-    #    """
-    #    splitted_routes = self.split()
-    #    idx = 0
-    #    for vehicle in self.vehicles:
-    #        current_count = 0
-    #        for appointment in splitted_routes[idx]:
-    #            # Departure
-    #            if appointment._type == 0:
+    def compute_loads(self, data):
+        """
+        Compute the load at each appointment for each vehicle.
+        """
+        list_appointment = data['appointment']
+        self.loads = []
+        splitted_routes = self.split()
+        for vehicle in splitted_routes:
+            current_load = 0
+            tmp_route = []
+            for element in vehicle:
+
+                if list_appointment[element].get_type() == \
+                   model.RequiredElementTypes.Departure.value:
+                    current_load += 1
+                else:
+                    current_load -= 1
+
+                if current_load < 0:
+                    print list_appointment[element].id_appointment()
+                tmp_route.append(current_load)
+            self.loads.append(tmp_route)
 
     def decode(self, data):
         """
@@ -107,15 +121,29 @@ class MvrpIndividual(object):
             index += 1
         return to_return
 
+    def encode_from_vehicle(self, list_journeys, parent):
+        """
+        Encodes the individual using a list of journeys and the vehicles
+        of parent.
+        """
+        self.vehicles = copy.deepcopy(parent.vehicles)
+        self.routes = list(itertools.chain.from_iterable(list_journeys))
+
     def encode(self, list_appointment, parent):
         """
         Encodes the individual using a list of appointments
         """
-        self.vehicles = []
+        tmp_vehicles = []
         index = 0
-        for sublist in list_appointment:
-            self.vehicles.append(copy.deepcopy(parent.vehicles[index]))
-            self.vehicles[index].set_count(len(sublist))
+        for vehicle in parent.vehicles:
+            tmp_vehicles.append(copy.deepcopy(vehicle))
+            tmp_vehicles[index].set_count(0)
             index += 1
 
+        index = 0
+        for sublist in list_appointment:
+            tmp_vehicles[index].set_count(len(sublist))
+            index += 1
+
+        self.vehicles = tmp_vehicles
         self.routes = list(itertools.chain.from_iterable(list_appointment))
