@@ -120,6 +120,24 @@ def init(ind_class, size, data):
 #    return ind
 
 
+def get_element_from_cube(cube, departure, arrival):
+    """
+    Gets the element going from departure to arrival from the cube.
+    """
+    #to_return = [elem for elem in cube
+    #             if elem.departure in address_list
+    #             and elem.arrival in address_list]
+
+    to_return = [elem for elem in cube
+                 if elem.departure() == departure.id_address()
+                 and elem.arrival() == arrival.id_address()]
+
+    if len(to_return) != 0:
+        return to_return[0]
+
+    return model.CubeItem()
+
+
 def evaluate(individual, data, depot, size):
     """
     Evaluate the genome.
@@ -143,9 +161,12 @@ def evaluate(individual, data, depot, size):
                 data['appointment'][route[0]])
 
             for gene1, gene2 in zip(route[:-1], route[1:]):
-                distance += model.euclidean_distance(
+                cube_elem = get_element_from_cube(
+                    data['cube'],
                     data['appointment'][gene1],
                     data['appointment'][gene2])
+                
+                distance += cube_elem.distance()
 
             # for gene1, gene2 in zip(route[:-1], route[1:]):
             #    load += 1
@@ -168,8 +189,11 @@ def evaluate(individual, data, depot, size):
     distance += individual.is_time_constraint_respected(data) * \
         malus['conflict']
 
+    # Number of vehicles used by the individual
+    nb_vehicles = individual.vehicles_used()
+
     # Return a tuple of fitness: the cost and the load
-    return distance, load
+    return distance, load, nb_vehicles
 
 
 def window_bounds_checking(app1, app2):

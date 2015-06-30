@@ -90,8 +90,10 @@ def load_cube(cube_list):
                            c.ArrivalAddress,
                            c.Duration,
                            c.Distance,
-                           c.IdCubeTimeRange)
+                           c.IdCubeTimeRange,
+                           c.IdAddress)
             for c in cube_list]
+
     return cube
 
 
@@ -111,11 +113,11 @@ def load_addresses(addresses):
     Creates a list of addresses using the class created in model.py.
     """
     address_list = [model.Address(id_address=addr.IdAddress,
-                                  id_agglomeration=addr.IdAgglomeration,
-                                  is_pick_up_plan=addr.IsPickUpPlan,
-                                  id_zone=addr.IdZone)
+                                  lat=addr.Lat,
+                                  lon=addr.Lon)
                     for addr in addresses]
-
+    
+    print address_list
     return address_list
 
 
@@ -155,7 +157,7 @@ def load_journeys(journeys):
                                   id_planned_elements=j.IdPlannedElements
                                   )
                     for j in journeys]
-
+    
     return journey_list
 
 
@@ -174,7 +176,7 @@ def load_vehicles(vehicles):
     return vehicle_list
 
 
-def load_appointments(appointments, journeys):
+def load_appointments(appointments, journeys, addresses):
     """
     Creates a list of appointments using the class created in model.py.
     """
@@ -185,8 +187,10 @@ def load_appointments(appointments, journeys):
             appointment_list.append([
                 model.Appointment(
                     model.Point(
-                        random.randrange(0, 1300),
-                        random.randrange(0, 700)),
+                        addr.get_x(),
+                        addr.get_y()),
+                        #random.randrange(0, 1300),
+                        #random.randrange(0, 700)),
                     time=coef_from_scale(
                         re.PlannedDate.value,
                         re.PlannedDate.scale),
@@ -199,8 +203,9 @@ def load_appointments(appointments, journeys):
                     address=re.IdAddress,
                     id_journey=index
                     )
+                for addr in addresses
                 for re in appointments
-                if re.IdRequiredElement == id_element]
+                if addr.id_address() == re.IdAddress and re.IdRequiredElement == id_element]
             )
 
     appointment_list = [it for sublist in appointment_list for it in sublist]
@@ -220,7 +225,7 @@ def load_appointments(appointments, journeys):
     #    address=re.IdAddress
     #    )
     #    for re in appointments]
-
+    
     return appointment_list
 
 
@@ -271,14 +276,15 @@ def load_protobuf(path_prefix):
     to_return = {}
     to_return['vehicle'] = load_vehicles(proto_dict['vehicle'].items)
     to_return['journey'] = load_journeys(proto_dict['journey'].items)
+    to_return['address'] = load_addresses(proto_dict['address'].items)
     to_return['appointment'] = load_appointments(
         proto_dict['required_element'].items,
-        to_return['journey']
+        to_return['journey'],
+        to_return['address']
         )
     to_return['cube'] = load_cube(proto_dict['cube'].items)
     to_return['employee'] = load_employees(proto_dict['crew'].items)
     to_return['crew'] = load_crews(proto_dict['crew'].items)
-    to_return['address'] = load_addresses(proto_dict['address'].items)
 
     #for key in to_return:
     #    if key != 'crew' and key != 'employee':

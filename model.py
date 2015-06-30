@@ -5,7 +5,7 @@ File containing the model classes for the project
 import random
 from enum import Enum
 from noise import pnoise2
-# from cmath import polar, rect, pi as PI, e as E, phase
+from cmath import pi as PI
 from math import sqrt
 
 CLAMP = lambda n, minn, maxn: max(min(maxn, n), minn)
@@ -54,12 +54,10 @@ class Address(object):
     This class represents an address as used in the GA.
     """
     def __repr__(self):
-        return '<Address id_address: %s, id_agglomeration: %s, ' % (
+        return '<Address id_address: %s, lat: %s, lon: %s>\n' % (
             self._id_address,
-            self._id_agglomeration
-            ) + 'is_pick_up_plan: %s, id_zone: %s\n' % (
-            self._is_pick_up_plan,
-            self._id_zone
+            self._lat,
+            self._lon
             )
 
     def id_address(self):
@@ -67,6 +65,28 @@ class Address(object):
         Returns the id of the address.
         """
         return self._id_address
+
+    def convert_coordinates(self):
+        """
+        Converts the (lon, lat) coordinates to (x, y) coordinates.
+        """
+        x_bound = 0
+        y_bound = 0
+        coeff = 1000
+        self._x = abs(self._lon - x_bound) * coeff * 2 * PI / 360
+        self._y = abs(self._lat - y_bound) * coeff * 2 * PI / 360
+    
+    def get_x(self):
+        """
+        Returns the x coordinate of the address.
+        """
+        return self._x
+
+    def get_y(self):
+        """
+        Returns the y coordinate of the address.
+        """
+        return self._y
 
     def id_agglomeration(self):
         """
@@ -81,6 +101,18 @@ class Address(object):
         """
         return self._is_pick_up_plan
 
+    def lon(self):
+        """
+        Returns the longitude of the address.
+        """
+        return self._lon
+
+    def lat(self):
+        """
+        Returns the latitude of the address.
+        """
+        return self._lat
+
     def id_zone(self):
         """
         Returns the id of the zone to which the address belongs.
@@ -88,15 +120,16 @@ class Address(object):
         return self._id_zone
 
     def __init__(self,
+                 lat=0,
+                 lon=0,
                  id_address=0,
                  id_agglomeration=0,
                  is_pick_up_plan=False,
                  id_zone=0):
         self._id_address = id_address
-        self._id_agglomeration = id_agglomeration
-        self._is_pick_up_plan = is_pick_up_plan
-        self._id_zone = id_zone
-
+        self._lat = lat
+        self._lon = lon
+        self.convert_coordinates()
 
 class RequiredElementTypes(Enum):
     """
@@ -239,9 +272,10 @@ class Appointment(object):
             self._id_appointment,
             self._starting_time,
             self._window_start
-            ) + "w_end:%s>\n" % (
-            self._window_end
-            )
+            ) + "w_end:%s id_address:%s>\n" % (
+                self._window_end,
+                self._id_address
+                )
 
     def get_x(self):
         """
@@ -303,6 +337,12 @@ class Appointment(object):
         """
         return self._id_appointment
 
+    def id_address(self):
+        """
+        Returns the id of the address associated with the appointment.
+        """
+        return self._id_address
+
     def __init__(self,
                  coordinate,
                  time=0,
@@ -333,7 +373,7 @@ class Appointment(object):
         #else:
         #    self._window_start = window['start']
         #    self._window_end = window['end']
-
+        self._id_address = address
         self._group = group
         self._load = load
 
@@ -595,12 +635,13 @@ class CubeItem(object):
     """
 
     def __init__(self,
-                 cubeitem_id,
-                 departure,
-                 arrival,
-                 duration,
-                 distance,
-                 timerange
+                 cubeitem_id=0,
+                 departure=0,
+                 arrival=0,
+                 duration=0,
+                 distance=0,
+                 timerange=0,
+                 address=0
                  ):
         self._id = cubeitem_id
         self._departure = departure
@@ -608,16 +649,25 @@ class CubeItem(object):
         self._duration = duration
         self._distance = distance
         self._timerange = timerange
+        self._address = address
 
     def __repr__(self):
         return "<CubeItem: id %d, departure: %d, " % (
             self._id,
             self._departure) + \
-            "arrival: %d, duration: %d, distance: %d, timerange: %d>\n" % (
+            "arrival: %d, duration: %d, distance: %d, timerange: %d, " % (
                 self._arrival,
                 self._duration,
                 self._distance,
-                self._timerange)
+                self._timerange) + \
+            "address: %d>\n" % (
+                self._address)
+
+    def id_address(self):
+        """
+        Returns the address id of the item.
+        """
+        return self._address
 
     def cubeitem_id(self):
         """

@@ -106,6 +106,12 @@ class MvrpIndividual(object):
                 tmp_route.append(current_load)
             self.loads.append(tmp_route)
 
+    def vehicles_used(self):
+        """
+        Returns the vehicles used by the individual.
+        """
+        return len([v for v in self.vehicles if v.count() > 0])
+
     def decode(self, data):
         """
         Decodes the individual using a dictionary of data.

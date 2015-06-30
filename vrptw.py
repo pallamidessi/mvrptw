@@ -27,7 +27,7 @@ def init_toolbox(ind_size, data_dict, depot):
     # Assign the custom individual class to the toolbox
     # And set the number of wanted fitnesses
     toolbox = base.Toolbox()
-    creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -1.0))
+    creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -1.0, -1.0))
     creator.create(
         "Individual",
         genome.MvrpIndividual,
