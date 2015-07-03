@@ -87,18 +87,18 @@ def init_parser():
     parser.add_argument(
         '-p', '--path', metavar='dataset_path', type=str,
         help='the path of the dataset to use',
-        default='400_customers/S-C1-400/C1_4_8.TXT')
+        default='protobuf_data/set2')
     parser.add_argument(
         '-z', '--zoom', metavar='zoom', type=int,
         help='the zooming factor for visualisation', default=3)
     return parser
 
 
-def make_data():
+def make_data(path):
     """
     Loading data properly.
     """
-    proto_dict = load_data.load_protobuf("protobuf_data/set2")
+    proto_dict = load_data.load_protobuf(path)
     dict_info = {}
     dict_info['data'] = {}
     dict_info['data']['appointment'] = proto_dict['appointment']
@@ -125,7 +125,7 @@ def main():
 
     random.seed(490)
 
-    dict_info = make_data()
+    dict_info = make_data(args.path)
 
     # Problem's definition
     dict_info['depot'] = model.Point(args.depot[0], args.depot[1])
