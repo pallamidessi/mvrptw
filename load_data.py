@@ -85,13 +85,13 @@ def load_cube(cube_list):
     Creates a list of the elements contained in the cube using the class
     created in model.py.
     """
-    cube = [model.CubeItem(c.Id,
-                           c.DepartureAddress,
-                           c.ArrivalAddress,
-                           c.Duration,
-                           c.Distance,
-                           c.IdCubeTimeRange,
-                           c.IdAddress)
+    cube = [model.CubeItem(cubeitem_id=c.Id,
+                           departure=c.DepartureAddress,
+                           arrival=c.ArrivalAddress,
+                           duration=c.Duration,
+                           distance=c.Distance,
+                           timerange=c.IdCubeTimeRange,
+                           address=c.IdAddress)
             for c in cube_list]
 
     return cube
@@ -117,7 +117,6 @@ def load_addresses(addresses):
                                   lon=addr.Lon)
                     for addr in addresses]
     
-    print address_list
     return address_list
 
 
