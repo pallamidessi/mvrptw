@@ -76,6 +76,12 @@ class MvrpIndividual(object):
         constraint.
         """
         self.compute_loads(data)
+        #print '=====================VEHICLE==================='
+        #print self.split()
+        #print '==============================================='
+        #print '======================LOADS===================='
+        #print self.loads
+        #print '==============================================='
         violated = 0
         for idx in range(0, len(self.loads)):
             for elem in self.loads[idx]:
@@ -101,8 +107,9 @@ class MvrpIndividual(object):
                 else:
                     current_load -= 1
 
-                if current_load < 0:
-                    print list_appointment[element].id_appointment()
+                #if current_load < 0:
+                #    print splitted_routes
+                #    print vehicle
                 tmp_route.append(current_load)
             self.loads.append(tmp_route)
 
