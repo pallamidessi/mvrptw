@@ -180,9 +180,6 @@ def main():
     stats.register("min", numpy.min, axis=0)
     stats.register("max", numpy.max, axis=0)
 
-    root = visualisation.Tk()
-    root.geometry(str(width) + "x" + str(height))
-
     # The genetic algorithm in itself
     algorithms.eaMuPlusLambda(
         pop,
@@ -196,6 +193,9 @@ def main():
         halloffame=hof)
 
     print hof[0]
+
+    root = visualisation.Tk()
+    root.geometry(str(width) + "x" + str(height))
 
     dict_info['tour'] = visualisation.individual_as_appointment(
         hof[0],
