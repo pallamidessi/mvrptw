@@ -193,20 +193,21 @@ def main():
         halloffame=hof)
 
     print hof[0]
+    print hof[0].make_json(dict_info)
 
-    root = visualisation.Tk()
-    root.geometry(str(width) + "x" + str(height))
-
-    dict_info['tour'] = visualisation.individual_as_appointment(
-        hof[0],
-        dict_info['data']['appointment']
-        )
-
+    # root = visualisation.Tk()
+    # root.geometry(str(width) + "x" + str(height))
+    #
+    # dict_info['tour'] = visualisation.individual_as_appointment(
+    #     hof[0],
+    #     dict_info['data']['appointment']
+    #     )
+    #
     # Create display of the problem and of the best solution
-    visualisation.Example(root, dict_info)
+    # visualisation.Example(root, dict_info)
 
     # Start the GUI main loop
-    root.mainloop()
+    # root.mainloop()
 
 if __name__ == '__main__':
     main()

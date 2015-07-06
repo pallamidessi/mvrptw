@@ -8,7 +8,7 @@ import itertools
 from operators import window_bounds_checking
 import model
 import copy
-
+import json
 
 class MvrpIndividual(object):
     """
@@ -160,3 +160,25 @@ class MvrpIndividual(object):
 
         self.vehicles = tmp_vehicles
         self.routes = list(itertools.chain.from_iterable(list_appointment))
+
+    def make_json(self, dict_info):
+        """
+        Transforms an individual into the json representing it.
+        """
+        list_appointment = dict_info['data']['appointment']
+        to_return = []
+        splitted_routes = self.split()
+
+        for idx in range(0, len(splitted_routes)):
+            current_vehicle = self.vehicles[idx].id_vehicle()
+            for element in splitted_routes[idx]:
+                new_dict = {}
+                new_dict['id_vehicle'] = current_vehicle
+                new_dict['id_journey'] = \
+                    dict_info['data']['journey'] \
+                    [list_appointment[element].id_journey()].id_journey()
+                new_dict['id_planned_element'] = \
+                    list_appointment[element].id_appointment()
+                to_return.append(new_dict)
+
+        return json.dumps(to_return, separators=(',',':'))
