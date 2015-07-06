@@ -192,8 +192,8 @@ def main():
         stats=stats,
         halloffame=hof)
 
-    print hof[0]
-    print hof[0].make_json(dict_info)
+    with open('JSON_result.json', 'w') as open_file:
+        open_file.write(hof[0].make_json(dict_info))
 
     # root = visualisation.Tk()
     # root.geometry(str(width) + "x" + str(height))
