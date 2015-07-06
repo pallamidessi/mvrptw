@@ -173,11 +173,11 @@ class MvrpIndividual(object):
             current_vehicle = self.vehicles[idx].id_vehicle()
             for element in splitted_routes[idx]:
                 new_dict = {}
-                new_dict['id_vehicle'] = current_vehicle
-                new_dict['id_journey'] = \
+                new_dict['idVehicle'] = current_vehicle
+                new_dict['idJourney'] = \
                     dict_info['data']['journey'] \
                     [list_appointment[element].id_journey()].id_journey()
-                new_dict['id_planned_element'] = \
+                new_dict['idPlannedElement'] = \
                     list_appointment[element].id_appointment()
                 to_return.append(new_dict)
 
